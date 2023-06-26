@@ -18,6 +18,16 @@ module.exports = {
         },
         onDelete: 'CASCADE',
       },
+      Name: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        //질문
+        // references: {
+        //   model: 'userInfos',
+        //   key: 'name',
+        // },
+        // onDelete: 'CASCADE',
+      },
       title: {
         allowNull: false,
         type: Sequelize.STRING,
@@ -27,6 +37,7 @@ module.exports = {
         type: Sequelize.STRING,
       },
       like: {
+        allowNull: false,
         type: Sequelize.INTEGER,
       },
       createdAt: {
