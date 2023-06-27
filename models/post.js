@@ -21,9 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       UserId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
       },
-      Name: {
+      Nickname: {
         allowNull: false,
         type: DataTypes.STRING,
       },
@@ -34,10 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         allowNull: false,
         type: DataTypes.STRING,
-      },
-      like: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
       },
       createdAt: {
         allowNull: false,
