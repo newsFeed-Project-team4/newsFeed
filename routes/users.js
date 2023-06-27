@@ -13,17 +13,17 @@ router.post('/signup', async (req, res) => {
   try {
     if (!email || !name || !password || !confirmPassword)
       return res
-        .status(412)
+        .status(400)
         .json({ errorMessage: '이메일, 이름, 비밀번호, 비밀번호 확인을 전부 입력해주세요.' });
 
     if (!emailReg.test(email))
       return res
-        .status(412)
+        .status(400)
         .json({ errorMessage: '이메일 형식이 올바르지 않습니다. 다시 입력해 주세요.' });
 
     const emailName = email.split('@')[0];
     if (password.length < 4 || password.includes(emailName))
-      return res.status(412).json({
+      return res.status(400).json({
         errorMessage: '패스워드는 4자리이상이고 이메일과 같은 값이 포함이 되면 안됩니다.',
       });
 
@@ -31,7 +31,7 @@ router.post('/signup', async (req, res) => {
       return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
 
     const existUser = await User.findOne({ where: { email } });
-    if (existUser) return res.status(400).json({ message: '이미 존재하는 이메일입니다.' });
+    if (existUser) return res.status(409).json({ message: '이미 존재하는 이메일입니다.' });
 
     const hashPassword = await bcrypt.hash(password, salt);
 
@@ -41,7 +41,7 @@ router.post('/signup', async (req, res) => {
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
+    return res.status(500).json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
   }
 });
 
@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(412).json({ errorMessage: '이메일 또는 패스워드를 입력해주세요.' });
+      return res.status(400).json({ errorMessage: '이메일 또는 패스워드를 입력해주세요.' });
     }
     const user = await User.findOne({
       where: { email },
@@ -79,7 +79,7 @@ router.post('/login', async (req, res) => {
     return res.status(200).json({ message: `${userInfo.name}님 환영합니다.` });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ errorMessage: '로그인에 실패했습니다.' });
+    res.status(500).json({ errorMessage: '로그인에 실패했습니다.' });
   }
 });
 
@@ -114,13 +114,13 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
 
     if (!match) {
       //저장된 비밀번호와 입력한 비밀번호가 같지않을때
-      return res.status(412).json({ errorMessage: '패스워드가 일치하지않습니다.' });
+      return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
     } else if (!email || !name) {
       //이메일 또는 이름을 입력하지 않았을때
-      return res.status(412).json({ errorMessage: '이메일, 이름을 입력해주세요.' });
+      return res.status(400).json({ errorMessage: '이메일, 이름을 입력해주세요.' });
     } else if (beforePassword.length < 4 || pwdCheckEmail > -1) {
       //입려한 비밀번호가 4자리 미만이거나 비밀번호에 이메일 주소 @앞과 같은 값이 있을때
-      return res.status(412).json({
+      return res.status(400).json({
         errorMessage: '패스워드는 4자리 이상이고 이메일과 같은 값이 포함이 되면 안됩니다.',
       });
     } else if (afterPassword != confirmPassword) {
@@ -168,12 +168,12 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
     );
     return res.status(200).json({ message: '회원 정보가 수정되었습니다.' });
   } catch (error) {
-    return res.status(400).json({ errorMessage: '회원정보 수정에 실패했습니다.' });
+    return res.status(500).json({ errorMessage: '회원정보 수정에 실패했습니다.' });
   }
 });
 
 //로그아웃 API
-router.delete('/login/:userId', authMiddleware, async (req, res) => {
+router.delete('/logout/:userId', authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
 
@@ -183,7 +183,7 @@ router.delete('/login/:userId', authMiddleware, async (req, res) => {
     res.clearCookie('cookie 이름');
     res.redirect('/');
   } catch (error) {
-    return res.status(400).json({ errorMessage: '로그아웃에 실패했습니다.' });
+    return res.status(500).json({ errorMessage: '로그아웃에 실패했습니다.' });
   }
 });
 module.exports = router;
