@@ -1,9 +1,33 @@
 const express = require('express');
 const { Op } = require('sequelize');
 const { Post } = require('../models');
-const authMiddleware = require('../middlewares/auth-middleware');
+const authMiddleware = require('../middleware/auth-middleware');
 const router = express.Router();
 
+router.post('/posts', authMiddleware, async (req, res) => {
+  try {
+    const { UserId } = res.locals.user;
+    const name = res.locals.Nickname
+    const { title, content } = req.body;
+
+    if (!title || !content) {
+      return res.status(400).json({
+      errorMessage: '게시글의 정보가 입력되지 않았습니다.',
+    });
+    }
+    const post = await Post.create({
+      UserId: UserId,
+      Name: name,
+      title,
+      content,
+    });
+
+    return res.status(201).json({ message: '게시글을 생성하였습니다.' });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
+  }
+});
 // 게시글 전체 조회
 router.get('/posts', async (req, res) => {
   try {

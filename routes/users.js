@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const { User, UserInfo } = require('../models');
+const authMiddleware = require('../middleware/auth-middleware')
 const router = express.Router();
 
 const salt = 12;
