@@ -68,12 +68,13 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
     const { userId } = req.params;
     const user = await User.findOne({ where: { userId } });
     const userInfo = await UserInfo.findOne({ where: { userId } });
+    const match = await bcrypt.compare(beforePassword, user.password);
 
     //이메일 과 같은 값이 들어가면 안됨
     const emailSplit = email.split('@');
     const pwdCheckEmail = beforePassword.search(emailSplit[0]);
 
-    if (beforePassword !== user.password) {
+    if (!match) {
       //저장된 비밀번호와 입력한 비밀번호가 같지않을때
       return res.status(412).json({ errorMessage: '패스워드가 일치하지않습니다.' });
     } else if (!email || !name) {
@@ -103,8 +104,10 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
       );
     } else {
       //그렇지 않다면 비밀번호 변경이니 변경된 비밀번호로 수정
+      const hashPassword = await bcrypt.hash(afterPassword, salt);
+
       await user.update(
-        { email, password: afterPassword },
+        { email, password: hashPassword },
         {
           where: {
             [Op.and]: [{ userId }],
