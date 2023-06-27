@@ -85,4 +85,19 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
     return res.status(400).json({ errorMessage: '회원정보 수정에 실패했습니다.' });
   }
 });
+
+//로그아웃 API
+router.delete('/login/:userId', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    await User.findOne({ where: { userId } });
+
+    //현재 쿠키를 지움으로써 로그아웃, 쿠키이름은 지정되면 변경
+    res.clearCookie('cookie 이름');
+    res.redirect('/');
+  } catch (error) {
+    return res.status(400).json({ errorMessage: '로그아웃에 실패했습니다.' });
+  }
+});
 module.exports = router;
