@@ -9,7 +9,7 @@ router.post('/posts', authMiddleware, async (req, res) => {
     const { title, content } = req.body;
 
     if (!title || !content) {
-      return res.status(412).json({
+      return res.status(400).json({
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
@@ -23,7 +23,7 @@ router.post('/posts', authMiddleware, async (req, res) => {
     return res.status(201).json({ message: '게시글을 생성하였습니다.' });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
+    res.status(500).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
   }
 });
 
