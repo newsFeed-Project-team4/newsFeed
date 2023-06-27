@@ -90,7 +90,6 @@ router.post('/login', async (req, res) => {
 // Case 2)
 // const match = await bcrypt.compare(ComparePW, hash);
 
-
 //회원 정보 수정 API
 router.put('/login/:userId', authMiddleware, async (req, res) => {
   try {
@@ -107,12 +106,13 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
     const { userId } = req.params;
     const user = await User.findOne({ where: { userId } });
     const userInfo = await UserInfo.findOne({ where: { userId } });
+    const match = await bcrypt.compare(beforePassword, user.password);
 
     //이메일 과 같은 값이 들어가면 안됨
     const emailSplit = email.split('@');
     const pwdCheckEmail = beforePassword.search(emailSplit[0]);
 
-    if (beforePassword !== user.password) {
+    if (!match) {
       //저장된 비밀번호와 입력한 비밀번호가 같지않을때
       return res.status(412).json({ errorMessage: '패스워드가 일치하지않습니다.' });
     } else if (!email || !name) {
@@ -142,8 +142,10 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
       );
     } else {
       //그렇지 않다면 비밀번호 변경이니 변경된 비밀번호로 수정
+      const hashPassword = await bcrypt.hash(afterPassword, salt);
+
       await user.update(
-        { email, password: afterPassword },
+        { email, password: hashPassword },
         {
           where: {
             [Op.and]: [{ userId }],
@@ -170,5 +172,18 @@ router.put('/login/:userId', authMiddleware, async (req, res) => {
   }
 });
 
+//로그아웃 API
+router.delete('/login/:userId', authMiddleware, async (req, res) => {
+  try {
+    const { userId } = req.params;
 
+    await User.findOne({ where: { userId } });
+
+    //현재 쿠키를 지움으로써 로그아웃, 쿠키이름은 지정되면 변경
+    res.clearCookie('cookie 이름');
+    res.redirect('/');
+  } catch (error) {
+    return res.status(400).json({ errorMessage: '로그아웃에 실패했습니다.' });
+  }
+});
 module.exports = router;
