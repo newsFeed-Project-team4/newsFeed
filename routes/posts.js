@@ -1,11 +1,12 @@
 const express = require('express');
 const { Post } = require('../models');
-const authMiddleware = require('../middlewares/auth-middleware');
+const authMiddleware = require('../middleware/auth-middleware');
 const router = express.Router();
 
 router.post('/posts', authMiddleware, async (req, res) => {
   try {
-    const { userId } = res.locals.user;
+    const { UserId } = res.locals.user;
+    const name = res.locals.Nickname
     const { title, content } = req.body;
 
     if (!title || !content) {
@@ -13,9 +14,9 @@ router.post('/posts', authMiddleware, async (req, res) => {
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
-
     const post = await Post.create({
-      UserId: userId,
+      UserId: UserId,
+      Name: name,
       title,
       content,
     });
