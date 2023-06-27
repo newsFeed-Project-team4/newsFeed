@@ -1,12 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const router = express.Router();
-
+const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const { User, UserInfo } = require('../models');
+const router = express.Router();
+
 const salt = 12;
-//임시 미들웨어
-const authMiddleware = require('../middlewares/auth-middleware');
 
 router.post('/signup', async (req, res) => {
   const { email, name, password, confirmPassword, petName, profileUrl } = req.body;
@@ -45,6 +44,45 @@ router.post('/signup', async (req, res) => {
     return res.status(400).json({ errorMessage: '요청한 데이터 형식이 올바르지 않습니다.' });
   }
 });
+
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(412).json({ errorMessage: '이메일 또는 패스워드를 입력해주세요.' });
+    }
+    const user = await User.findOne({
+      where: { email },
+    });
+    if (!user) {
+      return res
+        .status(412)
+        .json({ errorMessage: '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.' });
+    }
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res
+        .status(412)
+        .json({ errorMessage: '회원가입되지 않은 이메일이거나 비밀번호가 다릅니다.' });
+    }
+    const userInfo = await UserInfo.findOne({
+      where: { userId: user.userId },
+    });
+    const token = jwt.sign(
+      {
+        userId: user.userId,
+      },
+      process.env.JWT_SECRET_KEY,
+    );
+
+    res.cookie('accessToken', `Bearer ${token}`);
+    return res.status(200).json({ message: `${userInfo.name}님 환영합니다.` });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ errorMessage: '로그인에 실패했습니다.' });
+  }
+});
+
 // Case 1)
 // bcrypt.compare(ComparePW, hash, (err, result) => {
 //     result
