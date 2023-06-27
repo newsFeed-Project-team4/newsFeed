@@ -2,8 +2,6 @@ const express = require('express');
 const { Post } = require('../models');
 const authMiddleware = require('../middlewares/auth-middleware');
 const router = express.Router();
-const { Post } = require('../models');
-const authMiddleware = require('../middlewares/auth-middleware');
 
 router.post('/posts', authMiddleware, async (req, res) => {
   try {
