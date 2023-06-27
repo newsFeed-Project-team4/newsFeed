@@ -7,8 +7,10 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User }) {
-      this.belongsTo(User, {
+    static associate(models) {
+      // define association here
+
+      this.belongsTo(models.User, {
         targetKey: 'userId',
         foreignKey: 'UserId',
       });
@@ -24,9 +26,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       UserId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
       },
-      Name: {
+      Nickname: {
         allowNull: false,
         type: DataTypes.STRING,
       },
@@ -37,10 +39,6 @@ module.exports = (sequelize, DataTypes) => {
       content: {
         allowNull: false,
         type: DataTypes.STRING,
-      },
-      like: {
-        allowNull: false,
-        type: DataTypes.INTEGER,
       },
       createdAt: {
         allowNull: false,
