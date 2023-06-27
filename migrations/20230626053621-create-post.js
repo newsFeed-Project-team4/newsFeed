@@ -21,12 +21,6 @@ module.exports = {
       Name: {
         allowNull: false,
         type: Sequelize.STRING,
-        //질문
-        // references: {
-        //   model: 'userInfos',
-        //   key: 'name',
-        // },
-        // onDelete: 'CASCADE',
       },
       title: {
         allowNull: false,
