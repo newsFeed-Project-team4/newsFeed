@@ -8,26 +8,27 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ User }) {
-      this.belongsTo(User, { targetKey: 'userId', foreignKey: 'UserId' });
+      this.belongsTo(User, { targetKey: 'user_id', foreignKey: 'User_id' });
     }
   }
   Token.init(
     {
-      tokenId: {
+      token_id: {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.STRING,
       },
-      UserId: {
+      User_id: {
         allowNull: false,
+        unique: true,
         type: DataTypes.INTEGER,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -35,6 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
+      timestamps: false,
       tableName: 'tokens',
       modelName: 'Token',
     },

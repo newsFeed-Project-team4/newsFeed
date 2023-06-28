@@ -1,33 +1,32 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class User extends Model {
+  class Like extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ UserInfo, Token }) {
-      this.hasOne(UserInfo, { sourceKey: 'user_id', foreignKey: 'User_id' });
-      this.hasOne(Token, { sourceKey: 'user_id', foreignKey: 'User_id' });
+    static associate({ UserInfo, Post }) {
+      this.belongsTo(UserInfo, { targetKey: 'User_id', foreignKey: 'User_id' });
+      this.belongsTo(Post, { targetKey: 'post_id', foreignKey: 'Post_id' });
     }
   }
-  User.init(
+  Like.init(
     {
-      user_id: {
+      like_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      email: {
+      User_id: {
         allowNull: false,
-        unique: true,
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
       },
-      password: {
+      Post_id: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
       },
       created_at: {
         allowNull: false,
@@ -43,9 +42,9 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       timestamps: false,
-      tableName: 'users',
-      modelName: 'User',
+      tableName: 'likes',
+      modelName: 'Like',
     },
   );
-  return User;
+  return Like;
 };

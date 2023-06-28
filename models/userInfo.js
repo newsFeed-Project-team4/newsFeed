@@ -7,36 +7,45 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User }) {
-      this.belongsTo(User, { targetKey: 'userId', foreignKey: 'UserId' });
+    static associate({ User, Post, Like, Comment }) {
+      this.belongsTo(User, { targetKey: 'user_id', foreignKey: 'User_id' });
+      this.hasMany(Post, { sourceKey: 'User_id', foreignKey: 'User_id' });
+      this.hasMany(Like, { sourceKey: 'User_id', foreignKey: 'User_id' });
+      this.hasMany(Comment, { sourceKey: 'User_id', foreignKey: 'User_id' });
     }
   }
   UserInfo.init(
     {
-      UserId: {
+      user_info_id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
+        type: DataTypes.INTEGER,
+      },
+      User_id: {
+        allowNull: false,
+        unique: true,
         type: DataTypes.INTEGER,
       },
       name: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      oneLiner: {
+      one_line_introduction: {
         type: DataTypes.STRING,
       },
-      petName: {
+      pet_name: {
         type: DataTypes.STRING,
       },
-      imageUrl: {
+      image_url: {
         type: DataTypes.STRING,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -44,7 +53,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      tableName: 'userInfos',
+      timestamps: false,
+      tableName: 'user_infos',
       modelName: 'UserInfo',
     },
   );
