@@ -3,24 +3,20 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('posts', {
-      postId: {
+      post_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      UserId: {
+      User_id: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'users',
-          key: 'userId',
+          model: 'user_infos',
+          key: 'User_id',
         },
         onDelete: 'CASCADE',
-      },
-      Name: {
-        allowNull: false,
-        type: Sequelize.STRING,
       },
       title: {
         allowNull: false,
@@ -28,24 +24,25 @@ module.exports = {
       },
       content: {
         allowNull: false,
+        type: Sequelize.TEXT,
+      },
+      Name: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      like: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-      },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
       },
     });
   },
+  timestamp: false,
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('posts');
   },

@@ -7,25 +7,23 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate({ User }) {
-      this.belongsTo(User, { targetKey: 'userId', foreignKey: 'UserId' });
+    static associate({ UserInfo, Comment, Like }) {
+      this.belongsTo(UserInfo, { targetKey: 'User_id', foreignKey: 'User_id' });
+      this.hasMany(Comment, { sourceKey: 'post_id', foreignKey: 'Post_id' });
+      this.hasMany(Like, { sourceKey: 'post_id', foreignKey: 'Post_id' });
     }
   }
   Post.init(
     {
-      postId: {
+      post_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
-      UserId: {
+      User_id: {
         allowNull: false,
         type: DataTypes.INTEGER,
-      },
-        Name: {
-        allowNull: false,
-        type: DataTypes.STRING,
       },
       title: {
         allowNull: false,
@@ -35,12 +33,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      createdAt: {
+      Name: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
+      created_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
@@ -48,6 +50,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
+      timestamps: false,
       tableName: 'posts',
       modelName: 'Post',
     },

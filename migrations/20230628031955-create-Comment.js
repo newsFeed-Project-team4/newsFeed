@@ -2,8 +2,8 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('user_infos', {
-      user_info_id: {
+    await queryInterface.createTable('comments', {
+      comment_id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
@@ -11,11 +11,19 @@ module.exports = {
       },
       User_id: {
         allowNull: false,
-        unique: true,
         type: Sequelize.INTEGER,
         references: {
-          model: 'users',
-          key: 'user_id',
+          model: 'user_infos',
+          key: 'User_id',
+        },
+        onDelete: 'CASCADE',
+      },
+      Post_id: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'posts',
+          key: 'post_id',
         },
         onDelete: 'CASCADE',
       },
@@ -23,13 +31,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      one_line_introduction: {
-        type: Sequelize.STRING,
-      },
-      pet_name: {
-        type: Sequelize.STRING,
-      },
-      image_url: {
+      comment: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       created_at: {
@@ -46,6 +49,6 @@ module.exports = {
   },
   timestamp: false,
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('user_infos');
+    await queryInterface.dropTable('comments');
   },
 };
