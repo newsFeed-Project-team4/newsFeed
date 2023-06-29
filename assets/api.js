@@ -55,6 +55,7 @@ $logoutBtn.addEventListener('click', () => {
   });
 });
 
+
 function savePost() {
   let title = $title;
   let content = $content;
@@ -77,7 +78,7 @@ function savePost() {
   });
 }
 
-function getPosts(callback) {
+function printPosts(callback) {
   $('.postBox').empty();
   $.ajax({
     type: 'GET',
