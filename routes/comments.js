@@ -11,8 +11,6 @@ router.post('/posts/:post_id/comments', authMiddleware, async (req, res) => {
   const { User_id } = res.locals.user;
   try {
     const post = await Post.findOne({ where: { post_id } });
-    console.log('-----');
-    console.log(User_id);
     const user = await UserInfo.findOne({ where: { User_id } });
     const existToken = await Token.findOne({ where: { User_id: user.User_id } });
 

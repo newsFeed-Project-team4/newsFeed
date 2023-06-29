@@ -188,7 +188,7 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
 
     const existingLike = await Like.findOne({
       where: {
-        post_id,
+        Post_id: post_id,
         User_id,
       },
     });
@@ -200,7 +200,7 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
     } else {
       // 좋아요 추가
       await Like.create({
-        post_id,
+        Post_id: post_id,
         User_id,
       }); // 좋아요 기록 생성
       return res.status(200).json({ message: '좋아요를 추가했습니다.' });

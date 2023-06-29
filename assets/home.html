@@ -176,8 +176,9 @@
 
     </footer>
 
-    <script src="api.js" type="module"></script>
+    <script src="./api.js" type="module"></script>
     <script> 
+    
             //모달 창 열기
             function userInfoBtn(){
                 if($('.modal').css("display") == "none"){
@@ -191,9 +192,7 @@
             }
         function passwordChange(){
             const userEmail = localStorage.getItem("email");
-
-    <script src="./api.js" type="module"></script>
-    <script> 
+        }
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const user_id = urlParams.get("id");
