@@ -336,7 +336,8 @@ router.post('/logout/:user_id', authMiddleware, async (req, res) => {
       });
 
     await Token.destroy({ where: { User_id: user_id } });
-    if (user_id === currentUser.user_id) res.clearCookie('accessToken');
+
+    if (user_id / 1 === currentUser.User_id) res.clearCookie('accessToken');
 
     //현재 쿠키를 지움으로써 로그아웃, 쿠키이름은 지정되면 변경
     // res.redirect('/');

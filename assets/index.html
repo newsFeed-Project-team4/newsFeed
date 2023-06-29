@@ -132,7 +132,32 @@
             if($('#modal2').css("display") != "none"){
                 $('#modal2').hide();
             }
+
         }        
+
+        }
+        async function sign_in() {
+            let email = $("#inputEmail").val();
+            let password = $("#inputPWD").val();
+            $.ajax({
+            type: "POST",
+            url: "/login",
+            data: {
+                email: email,
+                password: password,
+            },
+            success: function (response) {
+                localStorage.setItem("email", email);
+                
+                window.location.replace(`/home.html`);
+            },
+            error: function (error) {
+                alert(error.responseJSON.errorMessage);
+            },
+            });
+        }
+
+
 
         function sign_up(){
             let email = $("#signUpEmail").val();

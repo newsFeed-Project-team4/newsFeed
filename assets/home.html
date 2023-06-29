@@ -129,8 +129,25 @@
     <footer>
 
     </footer>
+
     <script src="./api.js" type="module"></script>
     <script> 
+    
+            //모달 창 열기
+            function userInfoBtn(){
+                if($('.modal').css("display") == "none"){
+                    $('.modal').show();
+                }
+            }
+            function close(){
+                if($('.modal').css("display") != "none"){
+                    $('.modal2').hide();
+                }
+            }
+        function passwordChange(){
+            const userEmail = localStorage.getItem("email");
+        }
+
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const user_id = urlParams.get("id");
