@@ -201,16 +201,6 @@ router.get('/search/posts', async (req, res) => {
   return res.status(200).json({ posts: posts });
 });
 
-router.get('/posts/:post_id/like', authMiddleware, async (res, req) => {
-  try {
-    const { post_id } = req.params;
-    const user = res.locals.user;
-    const exsitLike = await like.from;
-  } catch (error) {
-    return res.status(500).json({ errorMessage: '좋아요를 실패했습니다' });
-  }
-});
-
 // 좋아요 기능
 router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
   const { post_id } = req.params;
