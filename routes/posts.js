@@ -1,13 +1,13 @@
 const express = require('express');
-const { Post, User, UserInfo } = require('../models');
+const { Post, User, UserInfo, Like } = require('../models');
 const { Op } = require('sequelize');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 
-// 게시글 작성
-router.post('/posts', authMiddleware, async (req, res) => {
+router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
   try {
+    const filepath = req.file ? req.file.location : null;
     const { User_id } = res.locals.user;
     const name = res.locals.userName;
     const { title, content } = req.body;
@@ -17,6 +17,7 @@ router.post('/posts', authMiddleware, async (req, res) => {
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
+
     const post = await Post.create({
       User_id,
       title,
@@ -67,6 +68,36 @@ router.get('/posts/:post_id', async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 조회에 실패했습니다.' });
+  }
+});
+
+// 게시글 검색 기능
+router.get('/lookup', async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    if (!search) {
+      return res.status(400).json({
+        message: '검색어를 입력해주세요.',
+      });
+    }
+
+    const searchPosts = await Post.findAll({
+      attributes: ['post_id', 'Name', 'title', 'content'],
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${search}%` } },
+          { content: { [Op.like]: `%${search}%` } },
+        ],
+      },
+    });
+
+    return res.status(200).json({ searchPosts });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message: '게시글 검색에 실패하였습니다.',
+    });
   }
 });
 
@@ -145,37 +176,38 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
 });
 
 // 게시글 검색 기능
-router.get('/search', async (req, res) => {
+router.get('/search/posts', async (req, res) => {
+  const { query, searchType } = req.query;
+  let whereCondition = {};
+
+  if (searchType === 'title') {
+    whereCondition = { title: { [Op.like]: `%${query}%` } };
+  } else if (searchType === 'content') {
+    whereCondition = { content: { [Op.like]: `%${query}%` } };
+  } else if (searchType === 'both') {
+    whereCondition = {
+      [Op.or]: [{ title: { [Op.like]: `%${query}%` } }, { content: { [Op.like]: `%${query}%` } }],
+    };
+  } else {
+    return res.status(400).json({ errorMessage: '정확히 검색해주세요.' });
+  }
+
+  const posts = await Post.findAll({
+    attributes: ['post_id', 'title', 'like', 'created_at'],
+    where: whereCondition,
+    order: [['created_at', 'DESC']],
+  });
+
+  return res.status(200).json({ posts: posts });
+});
+
+router.get('/posts/:post_id/like', authMiddleware, async (res, req) => {
   try {
-    const { query, searchType } = req.query;
-    let whereCondition = {};
-
-    if (searchType === 'title') {
-      whereCondition = { title: { [Op.like]: `%${query}%` } };
-    } else if (searchType === 'content') {
-      whereCondition = { content: { [Op.like]: `%${query}%` } };
-    } else if (searchType === 'both') {
-      whereCondition = {
-        [Op.or]: [{ title: { [Op.like]: `%${query}%` } }, { content: { [Op.like]: `%${query}%` } }],
-      };
-    } else {
-      return res.status(400).json({ errorMessage: '정확히 검색해주세요.' });
-    }
-
-    const posts = await Post.findAll({
-      attributes: ['post_id', 'User_id', 'title', 'Name', 'created_at', 'updated_at'],
-      where: whereCondition,
-      order: [['created_at', 'DESC']],
-    });
-
-    if (!posts.length) {
-      return res.status(404).json({ errorMessage: '검색 결과가 없습니다.' });
-    }
-
-    return res.status(200).json({ posts: posts });
+    const { post_id } = req.params;
+    const user = res.locals.user;
+    const exsitLike = await like.from;
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ errorMessage: '검색 도중에 에러가 발생했습니다.' });
+    return res.status(500).json({ errorMessage: '좋아요를 실패했습니다' });
   }
 });
 
@@ -214,4 +246,5 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
     return res.status(500).json({ message: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
   }
 });
+
 module.exports = router;
