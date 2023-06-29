@@ -9,6 +9,7 @@ const commentsRouter = require('./routes/comments');
 
 db.sequelize.sync();
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/', [usersRouter, postsRouter, commentsRouter]);
 app.use(express.static('./assets'));
