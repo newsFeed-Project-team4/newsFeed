@@ -1,5 +1,5 @@
 const express = require('express');
-const { Post, User, UserInfo, Like } = require('../models');
+const { Post, Like } = require('../models');
 const { Op } = require('sequelize');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
@@ -172,42 +172,6 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 삭제에 실패했습니다.' });
-  }
-});
-
-// 게시글 검색 기능
-router.get('/search/posts', async (req, res) => {
-  const { query, searchType } = req.query;
-  let whereCondition = {};
-
-  if (searchType === 'title') {
-    whereCondition = { title: { [Op.like]: `%${query}%` } };
-  } else if (searchType === 'content') {
-    whereCondition = { content: { [Op.like]: `%${query}%` } };
-  } else if (searchType === 'both') {
-    whereCondition = {
-      [Op.or]: [{ title: { [Op.like]: `%${query}%` } }, { content: { [Op.like]: `%${query}%` } }],
-    };
-  } else {
-    return res.status(400).json({ errorMessage: '정확히 검색해주세요.' });
-  }
-
-  const posts = await Post.findAll({
-    attributes: ['post_id', 'title', 'like', 'created_at'],
-    where: whereCondition,
-    order: [['created_at', 'DESC']],
-  });
-
-  return res.status(200).json({ posts: posts });
-});
-
-router.get('/posts/:post_id/like', authMiddleware, async (res, req) => {
-  try {
-    const { post_id } = req.params;
-    const user = res.locals.user;
-    const exsitLike = await like.from;
-  } catch (error) {
-    return res.status(500).json({ errorMessage: '좋아요를 실패했습니다' });
   }
 });
 
