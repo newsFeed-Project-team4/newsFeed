@@ -5,11 +5,12 @@ const PORT = 3018;
 const db = require('./models');
 const usersRouter = require('./routes/users');
 const postsRouter = require('./routes/posts');
+const commentsRouter = require('./routes/comments');
 
 db.sequelize.sync();
 app.use(express.json());
 app.use(cookieParser());
-app.use('/', [usersRouter, postsRouter]);
+app.use('/', [usersRouter, postsRouter, commentsRouter]);
 app.use(express.static('./assets'));
 
 app.listen(PORT, () => {

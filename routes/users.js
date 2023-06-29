@@ -134,6 +134,14 @@ router.put('/login/:user_id', authMiddleware, async (req, res) => {
     } = req.body;
 
     const { user_id } = req.params;
+    const user = await User.findOne({ where: { user_id } });
+    const existToken = await Token.findOne({ where: { User_id: user.user_id } });
+
+    if (!existToken) {
+      return res.status(404).json({
+        errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
+      });
+    }
 
     if (!confirmPassword || !afterPassword)
       if (!name || !beforePassword) {
@@ -141,7 +149,6 @@ router.put('/login/:user_id', authMiddleware, async (req, res) => {
         return res.status(400).json({ errorMessage: '이름과 현재 비밀번호를 입력해 주세요.' });
       }
 
-    const user = await User.findOne({ where: { user_id } });
     if (!user)
       return res.status(404).json({
         errorMessage: '회원가입이 되어 있지 않은 아이디입니다. 회원가입 해주세요.',
