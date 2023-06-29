@@ -79,7 +79,9 @@ router.post('/login', async (req, res) => {
 
     await Token.create({ token_id: refreshToken, User_id: user.user_id });
     res.cookie('accessToken', `Bearer ${accessToken}`);
-    return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, accessToken });
+    return res
+      .status(200)
+      .json({ message: `${userInfo.name}님 환영합니다.`, accessToken, userInfo });
   }
 
   try {
@@ -99,7 +101,9 @@ router.post('/login', async (req, res) => {
     });
 
     res.cookie('accessToken', `Bearer ${accessToken}`);
-    return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, accessToken });
+    return res
+      .status(200)
+      .json({ message: `${userInfo.name}님 환영합니다.`, accessToken, userInfo });
   } catch (error) {
     // refreshToken이 만료되었을 경우
     // 두 토큰을 전부 생성
@@ -112,7 +116,9 @@ router.post('/login', async (req, res) => {
       await Token.destroy({ where: { User_id: user.user_id } });
       await Token.create({ token_id: refreshToken, User_id: user.user_id });
       res.cookie('accessToken', `Bearer ${accessToken}`);
-      return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, accessToken });
+      return res
+        .status(200)
+        .json({ message: `${userInfo.name}님 환영합니다.`, accessToken, userInfo });
     }
     console.log(error);
     return res.status(500).json({ errorMessage: '로그인에 실패하였습니다.' });
@@ -246,7 +252,7 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
         },
       },
     );
-    return res.status(200).json({ message: '회원 정보가 수정되었습니다.' });
+    return res.status(200).json({ message: '회원 정보가 수정되었습니다.', userInfo });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ errorMessage: '회원정보 수정에 실패했습니다.' });

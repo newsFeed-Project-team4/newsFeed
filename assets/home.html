@@ -24,23 +24,6 @@
             onclick="window.location.href = '/postWrite.html'">게시글 작성</button>
             <button type="button"
             class="printPosts"
-
-            onclick="printPosts()">전체 페이지 조회</button>
-            <button type="button"
-            class="homeBtn"
-            onclick="homeBack()">메인페이지 이동</button>
-        </div>
-        <div class="modal">
-            <div class="form">
-              <div>
-                <div class="input">
-                  <label for="email">email</label>
-                  <input id="email" class="modal-input" />
-                </div>
-                <div class="input">
-                  <label for="name">이름</label>
-                  <input id="name" class="modal-input" />
-
             onclick="printPosts()">전체 게시글 조회</button>
         </div>
         <div class="modal" id="modal">
@@ -53,7 +36,6 @@
                 <div class="input">
                   <label for="name">이름</label>
                   <input id="name" class="modal-input" value=""/>
-
                 </div>
                 <div class="input">
                   <label for="pwd">비밀번호</label>
@@ -61,35 +43,24 @@
                 </div>               
                 <div class="input">
                     <label for="petName">반려동물명</label>
-
-                    <input id="petName" class="modal-input" />
-                  </div>
-                <div class="textarea">
-                  <label for="onLiner">한마디</label>
-                  <textarea id="onLiner"></textarea>
-                </div> 
-                <div class="input">
-                    <label for="imageUrl">사진 url</label>
-                    <textarea id="imageUrl"></textarea>
-                 <input id="petName" class="modal-input" value=""/>
+                    <input id="petName" class="modal-input" value=""/>
                   </div>
                 <div class="input">
                   <label for="onLiner">한마디</label>
                   <input id="onLiner" value=""/>
                 </div> 
-                <!-- <div class="input">
+                <div class="textarea">
                     <label for="imageUrl">사진 url</label>
                     <textarea id="imageUrl"></textarea>
-                  </div> -->
+                  </div>
                   <!-- 위 사진 url을 아래 파일 업로드로 변경 예정 -->
-                  <div> 
+                  <!-- <div> 
                     <label>사진</label>
                     <form action="/posts" method="Post" enctype="multipart/form-data">
                         <input type="file" name="newFile" id="signUpImgUrl"/>
-                        <!-- <button type="submit">Upload</button> -->
+                         <button type="submit">Upload</button> 
                       </form>
-
-                  </div>
+                  </div> -->
               </div>
               <div class="input" id="afterPwd1">
                 <label for="afterPwd">변경할 비밀번호</label>
@@ -100,11 +71,8 @@
                 <input id="confirmPwd" class="modal-input" type="password" />
               </div> 
               <button class="passwordChangeBtn" onclick="passwordChange()">비밀번호 변경</button>
-
-              <button class="modal-btn" onclick="userInfoEditBtn(userEmail,function(){$('.modal').modal('hide');})">수정</button>
-              <button class="modal-btn" id="close" onclick="close()">닫기</button>
-
-
+              <button class="modal-btn" onclick="userInfoEditBtn(user_id)">수정</button>
+              <button class="modal-btn" id="close1" onclick="close1()">닫기</button>
             </div>
         </div>
         <div class="firstBox">
@@ -112,19 +80,6 @@
                 <div class="loginBox" id="loginBox">
                     <div>
                         <div class="imageBox">
-
-                            <img>
-                        </div>
-                        <div class="userInfo">
-                            <p>
-
-                            </p>
-                        </div>
-                    </div>
-                    <div class="btnBox">
-                        <button class="userInfoBtn" onclick="userInfoBtn()">회원정보 수정</button>
-                        <button class="logoutBtn">로그아웃</button>
-
                             <img id="profile_image" width="100" height="100">
                         </div>
                         <div class="userInfo">
@@ -134,7 +89,6 @@
                     <div class="btnBox">
                         <button class="userInfoBtn" onclick="userInfoBtn()">정보 수정</button>
                         <button class="logoutBtn" onclick="logoutBtn()">로그아웃</button>
-
                     </div>
                 </div>
             </div>
@@ -193,6 +147,7 @@
         function passwordChange(){
             const userEmail = localStorage.getItem("email");
         }
+
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const user_id = urlParams.get("id");
@@ -202,7 +157,8 @@
         $('input[id=name]').attr('value',user_info.name);
         $('input[id=petName]').attr('value',user_info.pet_name);
         $('input[id=onLiner]').attr('value',user_info.one_line_introduction);
-        
+        $('#imageUrl').append(user_info.image_url);
+
         document.getElementById("userInfoName").innerHTML = user_info.name;
         document.getElementById("profile_image").src = user_info.image_url;
         //회원 정보 수정
@@ -243,7 +199,6 @@
             }
         }
         function passwordChange(){
-
     
             if($('#afterPwd1').css("display") == "none"){
                 $('#afterPwd1').show();
@@ -254,26 +209,6 @@
                 $('#confirmPwd1').hide();
             }
         }
- $(document).ready(function () {
-        passwordChange();
-        function getPosts(posts){
-            for (let i = 0; i < posts.length; i++) {
-                post_list(posts[i]);
-            }
-        };
-    })
-    function getPosts(posts){
-        for (let i = 0; i < posts.length; i++) {
-            post_list(posts[i]);
-        }
-    }
-    function post_list(item) {
-        let htmlTemp = `<div>
-                    <label>${item['title']}</label>
-                    <p>${item['content']}</p>
-                </div>`
-        $(".postBox").append(htmlTemp);
-      }
 
         //게시글 부분 일단 보류
     // $(document).ready(function () {
@@ -322,7 +257,6 @@
     // function homeBtn(){
     //     window.location.replace(`/home.html?id=${user_info.User_id}`);
     // }
-
     </script>
 </body>
 </html>
