@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/mystyle.css" rel="stylesheet" />
+    <script
+    src="https://code.jquery.com/jquery-3.5.1.js"
+    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"
+  ></script>
+</head>
+<body>
+    <header>
+        <div class="mytitle">
+            <h3>반려동물 이야기</h3>            
+        </div>
+    </header>
+    <main>
+        <div class="titleWrite">                     
+            <div class="input">
+                <label for="title">제목</label>
+                <input id="title"/>
+              </div>
+        </div>
+        <div class="contentWrite">
+            <div class="textarea">
+                <label for="content">내용</label>
+                <textarea id="content"></textarea>
+              </div> 
+        </div>
+        </div> 
+            <button class="submit" onclick="savePost()">내용 저장</button>
+            <button class="hombtn" onclick="window.location.href = '/home.html'">홈페이지로 이동</button>
+        </div>
+    </main>
+    <footer>
+
+    </footer>
+    <script src="api.js" type="module"></script>
+</body>
+</html>

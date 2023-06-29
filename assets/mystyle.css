@@ -1,4 +1,4 @@
-* {
+
     font-family: "Gowun Dodum", sans-serif;
 }
 html,
@@ -159,3 +159,31 @@ body {
     color: aliceblue;
     background-color: rgb(24, 34, 71);
   }
+
+.postsBox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: green;
+  margin-top: 50px;
+}
+
+.posts {
+  background-color: #F9FFFF;
+  box-shadow: 0px 0px 8px gray;
+  width: 400px;
+  height: 500px;
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.posts:hover {
+  cursor: pointer;
+}
+
+.posts>img {
+  width: 360px;
+  height: 390px;
+  border-radius: 30px;
+  padding: 20px 20px 20px 20px;
+}

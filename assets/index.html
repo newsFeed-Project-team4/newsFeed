@@ -24,8 +24,12 @@
             onclick="writePage()">게시글 작성</button>
             <button type="button"
             class="printPosts"
-            onclick="printPosts()">전체 게시글 조회</button>
-            
+
+            onclick="printPosts()">전체 페이지 조회</button>
+            <button type="button"
+            class="homeBtn"
+            onclick="homeBack()">메인페이지 이동</button>
+
         </div>
         <div class="modal" id="modal2">
             <div class="form">
@@ -43,13 +47,20 @@
                   <input id="signUpPwd" class="modal-input" type="password" />
                 </div>  
                 <div class="input">
-                    <label for="signUpConfirmPwd">비밀번호 확인</label>
-                    <input id="signUpConfirmPwd" class="modal-input" type="password" />
+
+                    <label for="confirmPwd">비밀번호 확인</label>
+                    <input id="confirmPwd" class="modal-input" type="password" />
+
                   </div>              
                 <div class="input">
                     <label for="signUpPetName">반려동물명</label>
                     <input id="signUpPetName" class="modal-input" />
                   </div>
+
+                <div class="input">
+                    <label for="signUpImgUrl">사진 url</label>
+                    <textarea id="signUpImgUrl"></textarea>
+
                 <!-- <div class="input">
                     <label for="signUpImgUrl">사진 url</label>
                     <textarea id="signUpImgUrl"></textarea>
@@ -61,6 +72,7 @@
                         <input type="file" name="newFile" id="signUpImgUrl"/>
                         <!-- <button type="submit">Upload</button> -->
                       </form>
+
                   </div>
               </div>
               <button class="modal-btn" onclick="sign_up()">회원가입</button>
@@ -84,17 +96,19 @@
               
             </div>
             <div class="postBox">
-                <div class="post">
-                    <p>확인용</p>
+
+                <div>
+                    <label>확인용</label>
                 </div>
-                <div class="post">
-                    <p>확인용</p>
+                <div>
+                    <label>확인용</label>
                 </div>
-                <div class="post">
-                    <p>확인용</p>
+                <div>
+                    <label>확인용</label>
                 </div>
-                <div class="post">
-                    <p>확인용</p>
+                <div>
+                    <label>확인용</label>
+
                 </div>
             </div>
 
@@ -120,6 +134,9 @@
     <footer>
 
     </footer>
+
+        
+
     <script src="./api.js" type="module"></script>
     <script>
         //모달 창 열기
@@ -132,16 +149,42 @@
             if($('#modal2').css("display") != "none"){
                 $('#modal2').hide();
             }
+
+        }
+        async function sign_in() {
+            let email = $("#inputEmail").val();
+            let password = $("#inputPWD").val();
+            $.ajax({
+            type: "POST",
+            url: "/login",
+            data: {
+                email: email,
+                password: password,
+            },
+            success: function (response) {
+                localStorage.setItem("email", email);
+                
+                window.location.replace(`/home.html`);
+            },
+            error: function (error) {
+                alert(error.responseJSON.errorMessage);
+            },
+            });
+        }
+
         }        
+
 
         function sign_up(){
             let email = $("#signUpEmail").val();
             let name = $("#signUpName").val();
             let password=$("#signUpPwd").val();
-            let confirmPassword=$("#signUpConfirmPwd").val();
+
+            let confirmPassword=$("#confirmPwd").val();
             let petName=$("#signUpPetName").val();
             let imageUrl=$("#signUpImgUrl").val();
-            console.log(email,name,password,confirmPassword);     
+            console.log(petName,imageUrl);
+
             $.ajax({
                 type: "POST",
                 url: "/signup",
@@ -150,21 +193,29 @@
                     name:name,
                     password:password,
                     confirmPassword:confirmPassword,
-                    pet_name:petName,
-                    profile_url:imageUrl,
-                },
+
+                    petName:petName,
+                    profileUrl:imageUrl,
+                },                
                 success: function (response) {
                     $('#modal2').hide();
-                    alert("회원가입을 축하드립니다!", function () {
+                    customAlert("회원가입을 축하드립니다!", function () {
+
                         window.location.replace("/");
                     });
                 },
                 error: function (error) {
-                    alert(error.responseJSON.errorMessage);
+
+                    customAlert(error.responseJSON.errorMessage);
+
                 },
             })
         }
 
+
+        function writePage(){
+            alert("로그인 후 이용 가능합니다.");
+        }
         async function sign_in() {
             let email = $("#inputEmail").val();
             let password = $("#inputPWD").val();
