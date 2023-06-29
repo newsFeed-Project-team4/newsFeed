@@ -5,6 +5,7 @@ const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 
+// 게시글 작성
 router.post('/posts', authMiddleware, async (req, res) => {
   try {
     const { User_id } = res.locals.user;
@@ -144,7 +145,7 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
 });
 
 // 게시글 검색 기능
-router.get('/posts/search', async (req, res) => {
+router.get('/search', async (req, res) => {
   try {
     const { query, searchType } = req.query;
     let whereCondition = {};
@@ -162,7 +163,7 @@ router.get('/posts/search', async (req, res) => {
     }
 
     const posts = await Post.findAll({
-      attributes: ['post_id', 'title', 'like', 'created_at'],
+      attributes: ['post_id', 'User_id', 'title', 'Name', 'created_at', 'updated_at'],
       where: whereCondition,
       order: [['created_at', 'DESC']],
     });
@@ -179,7 +180,7 @@ router.get('/posts/search', async (req, res) => {
 });
 
 // 좋아요 기능
-router.post('/posts/:postId/like', authMiddleware, async (req, res) => {
+router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
   const { post_id } = req.params;
   const { User_id } = res.locals.user; // 현재 로그인한 사용자의 ID
 
@@ -196,39 +197,21 @@ router.post('/posts/:postId/like', authMiddleware, async (req, res) => {
       },
     });
 
-    await sequelize.transaction(async (t) => {
-      if (existingLike) {
-        // 이미 좋아요를 눌렀다면 좋아요 취소
-        await existingLike.destroy({ transaction: t }); // 좋아요 기록 삭제
-
-        await Post.decrement('like', {
-          where: { post_id },
-          transaction: t,
-        }); // 좋아요 수 감소
-
-        return res.status(200).json({ message: '좋아요를 취소했습니다.' });
-      } else {
-        // 좋아요 추가
-        await Like.create(
-          {
-            post_id,
-            User_id,
-          },
-          { transaction: t },
-        ); // 좋아요 기록 생성
-
-        await Post.increment('like', {
-          where: { post_id },
-          transaction: t,
-        }); // 좋아요 수 증가
-
-        return res.status(200).json({ message: '좋아요를 추가했습니다.' });
-      }
-    });
+    if (existingLike) {
+      // 이미 좋아요를 눌렀다면 좋아요 취소
+      await existingLike.destroy(); // 좋아요 기록 삭제
+      return res.status(200).json({ message: '좋아요를 취소했습니다.' });
+    } else {
+      // 좋아요 추가
+      await Like.create({
+        post_id,
+        User_id,
+      }); // 좋아요 기록 생성
+      return res.status(200).json({ message: '좋아요를 추가했습니다.' });
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
   }
 });
-
 module.exports = router;
