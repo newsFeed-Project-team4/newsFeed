@@ -6,11 +6,11 @@ const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const authMiddleware = require('../middlewares/auth-middleware.js');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
-const { appendFile } = require('fs');
 const salt = 12;
 
-router.post('/signup', async (req, res) => {
-  const { email, name, password, confirmPassword, pet_name, profile_url } = req.body;
+router.post('/signup', uploadMiddleware, async (req, res) => {
+  const filepath = req.file ? req.file.location : null;
+  const { email, name, password, confirmPassword, pet_name } = req.body;
   const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
   try {
     if (!email || !name || !password || !confirmPassword)
@@ -38,7 +38,7 @@ router.post('/signup', async (req, res) => {
     const hashPassword = await bcrypt.hash(password, salt);
 
     const user = await User.create({ email, password: hashPassword });
-    await UserInfo.create({ User_id: user.user_id, name, pet_name, profile_url });
+    await UserInfo.create({ User_id: user.user_id, name, pet_name, image_url: filepath });
 
     return res.status(201).json({ message: '회원 가입에 성공하였습니다.' });
   } catch (error) {
@@ -121,7 +121,8 @@ router.post('/login', async (req, res) => {
 
 //회원 정보 수정 API
 //현재 로그인 유지중인 유저의 정보를 수정하게끔 (비밀번호를 입력받아서 일치하면)
-router.put('/login/:user_id', authMiddleware, async (req, res) => {
+router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res) => {
+  const filepath = req.file ? req.file.location : null;
   try {
     const {
       name,
@@ -130,7 +131,6 @@ router.put('/login/:user_id', authMiddleware, async (req, res) => {
       confirmPassword, //비밀번호 확인
       pet_name,
       one_line_introduction,
-      image_url,
     } = req.body;
 
     const { user_id } = req.params;
@@ -197,7 +197,7 @@ router.put('/login/:user_id', authMiddleware, async (req, res) => {
     // if (!petName) petName = '반려동물은 없습니다.';
     // if (!imageUrl) imageUrl = '대체 사진 url';
     await userInfo.update(
-      { name, one_line_introduction, image_url, pet_name },
+      { name, one_line_introduction, image_url: filepath, pet_name },
       {
         where: {
           [Op.and]: [{ User_id: user.user_id }],
@@ -256,7 +256,7 @@ router.post('/switchId/:user_id', async (req, res) => {
 });
 
 //로그아웃 API
-router.delete('/logout/:user_id', authMiddleware, async (req, res) => {
+router.post('/logout/:user_id', authMiddleware, async (req, res) => {
   try {
     const { user_id } = req.params;
 

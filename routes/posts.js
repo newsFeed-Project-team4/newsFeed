@@ -1,11 +1,13 @@
 const express = require('express');
-const { Post, User, UserInfo } = require('../models');
+const { Post, User, UserInfo, Like } = require('../models');
+const { Op } = require('sequelize');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 
-router.post('/posts', authMiddleware, async (req, res) => {
+router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
   try {
+    const filepath = req.file ? req.file.location : null;
     const { User_id } = res.locals.user;
     const name = res.locals.userName;
     const { title, content } = req.body;
@@ -15,6 +17,7 @@ router.post('/posts', authMiddleware, async (req, res) => {
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
+
     const post = await Post.create({
       User_id,
       title,
@@ -65,6 +68,36 @@ router.get('/posts/:post_id', async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 조회에 실패했습니다.' });
+  }
+});
+
+// 게시글 검색 기능
+router.get('/lookup', async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    if (!search) {
+      return res.status(400).json({
+        message: '검색어를 입력해주세요.',
+      });
+    }
+
+    const searchPosts = await Post.findAll({
+      attributes: ['post_id', 'Name', 'title', 'content'],
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${search}%` } },
+          { content: { [Op.like]: `%${search}%` } },
+        ],
+      },
+    });
+
+    return res.status(200).json({ searchPosts });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      message: '게시글 검색에 실패하였습니다.',
+    });
   }
 });
 
@@ -143,7 +176,7 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
 });
 
 // 게시글 검색 기능
-router.get('/posts/search', async (req, res) => {
+router.get('/search/posts', async (req, res) => {
   const { query, searchType } = req.query;
   let whereCondition = {};
 
@@ -166,5 +199,68 @@ router.get('/posts/search', async (req, res) => {
   });
 
   return res.status(200).json({ posts: posts });
+});
+
+router.get('/posts/:post_id/like', authMiddleware, async (res, req) => {
+  try {
+    const { post_id } = req.params;
+    const user = res.locals.user;
+    const exsitLike = await like.from;
+  } catch (error) {
+    return res.status(500).json({ errorMessage: '좋아요를 실패했습니다' });
+  }
+});
+
+// 좋아요 기능
+router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
+  const { post_id } = req.params;
+  const { User_id } = res.locals.user; // 현재 로그인한 사용자의 ID
+
+  try {
+    const post = await Post.findByPk(post_id);
+    if (!post) {
+      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+    }
+
+    const existingLike = await Like.findOne({
+      where: {
+        post_id,
+        User_id,
+      },
+    });
+
+    await sequelize.transaction(async (t) => {
+      if (existingLike) {
+        // 이미 좋아요를 눌렀다면 좋아요 취소
+        await existingLike.destroy({ transaction: t }); // 좋아요 기록 삭제
+
+        await Post.decrement('like', {
+          where: { post_id },
+          transaction: t,
+        }); // 좋아요 수 감소
+
+        return res.status(200).json({ message: '좋아요를 취소했습니다.' });
+      } else {
+        // 좋아요 추가
+        await Like.create(
+          {
+            post_id,
+            User_id,
+          },
+          { transaction: t },
+        ); // 좋아요 기록 생성
+
+        await Post.increment('like', {
+          where: { post_id },
+          transaction: t,
+        }); // 좋아요 수 증가
+
+        return res.status(200).json({ message: '좋아요를 추가했습니다.' });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
+  }
 });
 module.exports = router;
