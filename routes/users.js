@@ -172,15 +172,21 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
     }
 
     //얘는 프론트에서 input을 줬을 때만 실행이 되게끔 설정이 가능해서 뺄 가능성 있음.
-    if (!password)
+    // if (!password)
+    //   return res.status(400).json({
+    //     errorMessage: `비밀번호가 입력이 되지 않았습니다.`,
+    //   });
+
+    // const existChangePermission = await bcrypt.compare(password, user.password);
+    // if (!existChangePermission)
+    //   return res.status(400).json({
+    //     errorMessage: `수정하려는 계정의 비밀번호와 일치하지 않아 수정할 수 없습니다.`,
+    //   });
+
+    // 프론트에서 비밀번호(beforePassword) 받아와서 확인
+    if (!beforePassword)
       return res.status(400).json({
         errorMessage: `비밀번호가 입력이 되지 않았습니다.`,
-      });
-
-    const existChangePermission = await bcrypt.compare(password, user.password);
-    if (!existChangePermission)
-      return res.status(400).json({
-        errorMessage: `수정하려는 계정의 비밀번호와 일치하지 않아 수정할 수 없습니다.`,
       });
 
     if (!confirmPassword || !afterPassword)
