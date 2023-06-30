@@ -15,35 +15,41 @@ async function signUp(event) {
   const pet_name = document.querySelector('#signUpPetName').value;
   const newFile = document.querySelector('#newFile').files[0];
 
-  const extension = newFile.name.split('.')[1];
-  const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
+  if (newFile) {
+    const extension = newFile.name.split('.');
+    //만약 이름이 ... 일경우를 제일 뒷값이 파일값
+    let index = 0;
+    for (let i in extension) {
+      index = i;
+    }
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
 
-  if (!allowedExtensions.includes(extension) || !newFile.type.startsWith('image/')) {
-    alert('이미지 파일만 업로드 가능합니다.');
-    return;
+    if (!allowedExtensions.includes(extension[index]) || !newFile.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+    form.append('newFile', newFile);
   }
-  form.append('newFile', newFile);
   form.append('email', email);
   form.append('name', name);
   form.append('password', password);
   form.append('confirmPassword', confirmPassword);
   form.append('pet_name', pet_name);
 
-  await fetch('/signup', {
-    method: 'POST',
-    body: form,
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      const errorMessage = res.errorMessage;
-      // 회원가입 완료 시 메인 페이지로 이동
-      if (errorMessage) {
-        alert(res.errorMessage);
-      } else {
-        alert(res.message);
-        window.location.href = '/';
-      }
-    });
+  $.ajax({
+    type: 'POST',
+    url: `/signup`,
+    processData: false,
+    contentType: false,
+    data: form,
+    error: function (error) {
+      alert(error.responseJSON.errorMessage);
+    },
+    success: function (response) {
+      alert(response.message);
+      window.location.href = '/';
+    },
+  });
 }
 
 signUpSubmitBtn.addEventListener('submit', signUp);

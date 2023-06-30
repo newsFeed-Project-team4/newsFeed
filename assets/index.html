@@ -106,6 +106,7 @@
           <div class="imgBox"></div>
           <label>확인용</label>
         </div>
+        <<<<<<< HEAD
         <div class="postBottomBox">
           <div class="imgBox"></div>
           <label>확인용</label>
@@ -120,52 +121,65 @@
         <input type="file" id="newFile" name="newFile" />
         <button type="submit">Upload</button>
       </form>
+      ======= >>>>>>> f6a2ea2782f42d9e55f4e9394e977a7ac8f46e45
     </main>
     <footer></footer>
     <script>
-      //모달 창 열기
-      function signUpModal() {
-        if ($('#modal2').css('display') == 'none') {
-          $('#modal2').show();
-        }
-      }
-      function close2() {
-        if ($('#modal2').css('display') != 'none') {
-          $('#modal2').hide();
-        }
-      }
+            //모달 창 열기
+            function signUpModal() {
+              if ($('#modal2').css('display') == 'none') {
+                $('#modal2').show();
+              }
+            }
+            function close2() {
+              if ($('#modal2').css('display') != 'none') {
+                $('#modal2').hide();
+              }
+            }
 
-      async function sign_in() {
-        let email = $('#inputEmail').val();
-        let password = $('#inputPWD').val();
-        $.ajax({
-          type: 'POST',
-          url: '/login',
-          data: {
-            email: email,
-            password: password,
-          },
-          success: function (response) {
-            const objString = JSON.stringify(response.userInfo);
-            localStorage.setItem('response', objString);
-            alert(response.message);
-            window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
-          },
-          error: function (error) {
-            alert(error.responseJSON.errorMessage);
-          },
-        });
-      }
+            async function sign_in() {
+              let email = $('#inputEmail').val();
+              let password = $('#inputPWD').val();
+              $.ajax({
+                type: 'POST',
+                url: '/login',
+                data: {
+                  email: email,
+                  password: password,
+                },
+                success: function (response) {
+                  const objString = JSON.stringify(response.userInfo);
+                  localStorage.setItem('response', objString);
+                  alert(response.message);
+                  window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
+                },
+                error: function (error) {
+                  alert(error.responseJSON.errorMessage);
+                },
+              });
+            }
 
-      //게시글 작성 버튼
-      function writePage() {
-        alert('로그인 후 이용 가능합니다.');
-      }
+      <<<<<<< HEAD
+            //게시글 작성 버튼
+            function writePage() {
+              alert('로그인 후 이용 가능합니다.');
+            }
+      =======
+              //게시글 작성 버튼
+              function writePage(){
+                  alert("로그인 후 이용 가능합니다.");
+              }
 
-      //전체 게시글 조회
-      function printPosts() {
-        window.location.replace(`/postRead.html`);
-      }
+              //전체 게시글 조회
+              function printPosts(){
+                  window.location.replace(`/postView.html`);
+              }
+      >>>>>>> f6a2ea2782f42d9e55f4e9394e977a7ac8f46e45
+
+            //전체 게시글 조회
+            function printPosts() {
+              window.location.replace(`/postRead.html`);
+            }
     </script>
   </body>
 </html>

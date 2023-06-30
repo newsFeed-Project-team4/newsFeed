@@ -92,17 +92,25 @@ label {
   display: block;
 }
 
-.firstBox {
+.firstBox{
   display: flex;
   flex-direction: row;
-  align-items: start;
-  justify-content: start;
+  align-items:start;
+  justify-content:start;
 
-  margin: 10px 10px 10px 10px;
+  background-color: antiquewhite;
+
+  padding: 5px 5px 5px 0;
+  margin:10px 10px 10px 10px;
 }
 
-.userInfoBox {
+.userInfoBox{
   margin-left: 3%;
+  background-color: aliceblue;
+  
+  border-radius: 3px;
+
+  padding: 3px 3px 3px 3px;
 }
 
 .postBox {
