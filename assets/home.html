@@ -188,8 +188,8 @@
     function printPosts(){
         const userInfo = JSON.parse(localStorage.getItem('response'));
         if(!userInfo) 
-            window.location.replace(`/postRead.html`);
-        else window.location.replace(`/postRead.html?id=${userInfo.User_id}`);
+            window.location.replace(`/postView.html`);
+        else window.location.replace(`/postView.html?id=${userInfo.User_id}`);
     }
     </script>
 </body>

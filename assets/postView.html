@@ -63,6 +63,15 @@
           </div>
         </div>
       </div>
+      <script>
+        function homeBack(){
+            const userInfo = JSON.parse(localStorage.getItem('response'));
+            if(!userInfo){
+                window.location.replace(`/`);
+            }
+            else window.location.replace(`/home.html?id=${userInfo.User_id}`);
+        }
+    </script>
     </main>
     <footer></footer>
   </body>
