@@ -1,180 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link href="/mystyle.css" rel="stylesheet" />
     <script
-    src="https://code.jquery.com/jquery-3.5.1.js"
-    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-    crossorigin="anonymous"
-  ></script>
-  <script src="./api.js" defer></script>
-</head>
-<body>
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./api.js" defer></script>
+  </head>
+  <body>
     <header>
-        <div class="mytitle">
-            <div class="titleName">
-                <h3>반려동물 이야기</h3>    
-            </div>  
-            <div class="search">
-                <input id="searchBox"/>
-                <button id="searchBtn">검색</button>
-            </div>      
+      <div class="mytitle">
+        <div class="titleName">
+          <h3>반려동물 이야기</h3>
         </div>
+        <div id="weather-container"></div>
+        <script src="weather.js"></script>
+        <div class="search">
+          <input id="searchBox" />
+          <button id="searchBtn">검색</button>
+        </div>
+      </div>
     </header>
     <main>
-        <div class="titleBtns">
-            <button type="button"
-            class="writePage"
-            onclick="writePage()">게시글 작성</button>
-            <button type="button"
-            class="printPosts"
-            onclick="printPosts()">전체 게시글 조회</button>
-            
+      <button id="toggleButton">새 가족을 찾아보세요!</button>
+      <div id="animal-container"></div>
+      <script src="animals.js"></script>
+      <div class="titleBtns">
+        <button type="button" class="writePage" onclick="writePage()">게시글 작성</button>
+        <button type="button" class="printPosts" onclick="printPosts()">전체 게시글 조회</button>
+      </div>
+      <div class="modal" id="modal2">
+        <div class="form">
+          <div>
+            <form class="signUpForm" enctype="multipart/form-data">
+              <div>
+                <div class="input">
+                  <label for="signUpEmail">email</label>
+                  <input id="signUpEmail" class="modal-input" />
+                </div>
+                <div class="input">
+                  <label for="signUpName">이름</label>
+                  <input id="signUpName" class="modal-input" />
+                </div>
+                <div class="input">
+                  <label for="signUpPwd">비밀번호</label>
+                  <input id="signUpPwd" class="modal-input" type="password" />
+                </div>
+                <div class="input">
+                  <label for="signUpConfirmPwd">비밀번호 확인</label>
+                  <input id="signUpConfirmPwd" class="modal-input" type="password" />
+                </div>
+                <div class="input">
+                  <label for="signUpPetName">반려동물명</label>
+                  <input id="signUpPetName" class="modal-input" />
+                </div>
+                <div class="signUpImgBox">
+                  <input type="file" id="newFile" name="newFile" />
+                </div>
+              </div>
+              <button class="modal-btn" id="signUpSubmit">회원가입</button>
+            </form>
+          </div>
+          <div>
+            <button class="modal-btn" id="close2" onclick="close2()">닫기</button>
+          </div>
         </div>
-        <div class="modal" id="modal2">
-            <div class="form">
-                <div>
-                    <form class="signUpForm" enctype="multipart/form-data">
-                        <div>
-                          <div class="input">
-                            <label for="signUpEmail">email</label>
-                            <input id="signUpEmail" class="modal-input" />
-                          </div>
-                          <div class="input">
-                            <label for="signUpName">이름</label>
-                            <input id="signUpName" class="modal-input" />
-                          </div>
-                          <div class="input">
-                            <label for="signUpPwd">비밀번호</label>
-                            <input id="signUpPwd" class="modal-input" type="password" />
-                          </div>  
-                          <div class="input">
-                              <label for="signUpConfirmPwd">비밀번호 확인</label>
-                              <input id="signUpConfirmPwd" class="modal-input" type="password" />
-                            </div>              
-                          <div class="input">
-                              <label for="signUpPetName">반려동물명</label>
-                              <input id="signUpPetName" class="modal-input" />
-                            </div>
-                            <div class="signUpImgBox">
-                                <input type="file" id="newFile" name="newFile" />
-                            </div>                            
-                        </div>
-                        <button class="modal-btn" id="signUpSubmit">회원가입</button>
-                      </form>
-                </div>
-                <div>
-                    <button class="modal-btn" id="close2" onclick="close2()">닫기</button>
-                </div>
+      </div>
+      <div class="firstBox">
+        <div class="userInfoBox">
+          <div class="loginForm" id="loginForm">
+            <label>이메일:</label>
+            <input id="inputEmail" /><br />
+            <label>PWD:</label>
+            <input id="inputPWD" type="password" />
+            <div>
+              <button class="submit" onclick="sign_in()">로그인</button>
             </div>
-            
+            <div>
+              <button class="signUpModal" onclick="signUpModal()">회원가입</button>
+            </div>
+          </div>
         </div>
-        <div class="firstBox">
-            <div class="userInfoBox">
-                <div class="loginForm" id="loginForm">
-                    <label>이메일:</label>
-                    <input id="inputEmail"><br>
-                    <label>PWD:</label>
-                    <input id="inputPWD" type="password">
-                    <div>
-                        <button class="submit" onclick="sign_in()">로그인</button>
-                    </div>
-                    <div>
-                        <button class="signUpModal" onclick="signUpModal()">회원가입</button>
-                    </div>
-                </div>
-              
-            </div>
-            <div class="postBox">
-                <div class="post">
-                    <p>확인용</p>
-                </div>
-                <div class="post">
-                    <p>확인용</p>
-                </div>
-                <div class="post">
-                    <p>확인용</p>
-                </div>
-                <div class="post">
-                    <p>확인용</p>
-                </div>
-            </div>
-
+        <div class="postBox">
+          <div class="post">
+            <p>확인용</p>
+          </div>
+          <div class="post">
+            <p>확인용</p>
+          </div>
+          <div class="post">
+            <p>확인용</p>
+          </div>
+          <div class="post">
+            <p>확인용</p>
+          </div>
         </div>
-        <div class="postImgBox">            
-            <div class="postBottomBox">
-                <div class="imgBox">
-                </div>
-                <label>확인용</label>
-            </div>   
-            <div class="postBottomBox">
-                <div class="imgBox">
-                </div>
-                <label>확인용</label>
-            </div>   
-            <div class="postBottomBox">
-                <div class="imgBox">
-                </div>
-                <label>확인용</label>
-            </div>
+      </div>
+      <div class="postImgBox">
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
+          <label>확인용</label>
         </div>
-        <form action="/" class="postForm" enctype="multipart/form-data">
-            <label>이미지 테스트</label><br>
-            <input type="file" id="newFile" name="newFile" />
-            <button type="submit">Upload</button>
-          </form>
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
+          <label>확인용</label>
+        </div>
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
+          <label>확인용</label>
+        </div>
+      </div>
+      <form action="/" class="postForm" enctype="multipart/form-data">
+        <label>이미지 테스트</label><br />
+        <input type="file" id="newFile" name="newFile" />
+        <button type="submit">Upload</button>
+      </form>
     </main>
-    <footer>
-
-    </footer>
+    <footer></footer>
     <script>
-        //모달 창 열기
-        function signUpModal(){
-            if($('#modal2').css("display") == "none"){
-                $('#modal2').show();
-            }
+      //모달 창 열기
+      function signUpModal() {
+        if ($('#modal2').css('display') == 'none') {
+          $('#modal2').show();
         }
-        function close2(){
-            if($('#modal2').css("display") != "none"){
-                $('#modal2').hide();
-            }
+      }
+      function close2() {
+        if ($('#modal2').css('display') != 'none') {
+          $('#modal2').hide();
         }
+      }
 
-        async function sign_in() {
-            let email = $("#inputEmail").val();
-            let password = $("#inputPWD").val();
-            $.ajax({
-            type: "POST",
-            url: "/login",
-            data: {
-                email: email,
-                password: password,
-            },
-            success: function (response) {
-                const objString = JSON.stringify(response.userInfo);
-                localStorage.setItem("response", objString);
-                alert(response.message);
-                window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
-            },
-            error: function (error) {
-                alert(error.responseJSON.errorMessage);
-            },
-            });
-        }
+      async function sign_in() {
+        let email = $('#inputEmail').val();
+        let password = $('#inputPWD').val();
+        $.ajax({
+          type: 'POST',
+          url: '/login',
+          data: {
+            email: email,
+            password: password,
+          },
+          success: function (response) {
+            const objString = JSON.stringify(response.userInfo);
+            localStorage.setItem('response', objString);
+            alert(response.message);
+            window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
+          },
+          error: function (error) {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
 
-        //게시글 작성 버튼
-        function writePage(){
-            alert("로그인 후 이용 가능합니다.");
-        }
+      //게시글 작성 버튼
+      function writePage() {
+        alert('로그인 후 이용 가능합니다.');
+      }
 
-        //전체 게시글 조회
-        function printPosts(){
-            window.location.replace(`/postRead.html`);
-        }
-
+      //전체 게시글 조회
+      function printPosts() {
+        window.location.replace(`/postRead.html`);
+      }
     </script>
-</body>
+  </body>
 </html>
