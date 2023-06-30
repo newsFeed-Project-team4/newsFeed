@@ -1,90 +1,54 @@
-const $name = document.querySelector('#name');
-const $pwd = document.querySelector('#pwd');
-const $email = document.querySelector('#email');
-const $imageUrl = document.querySelector('#imageUrl');
-const $petName = document.querySelector('#petName');
-const $onLiner = document.querySelector('#onLiner');
-const $afterPwd = document.querySelector('#afterPwd');
-const $confirmPwd = document.querySelector('#confirmPwd');
-const $logoutBtn = document.querySelector('.logoutBtn');
+document.addEventListener('DOMContentLoaded', () => {});
 
-const $title = document.querySelector('#title');
-const $content = document.querySelector('#content');
+//회원가입 form
+const signUpSubmitBtn = document.querySelector('.signUpForm');
 
-const { User } = require('../models');
-async function userInfoEditBtn(userEmail, callback) {
-  const user = await User.findOne({ where: { email: userEmail } });
-  $.ajax({
-    type: 'PUT',
-    url: `/login/${user.userId}`,
-    data: {
-      email: $email,
-      name: $name,
-      beforePassword: $pwd,
-      afterPassword: $afterPwd,
-      confirmPassword: $confirmPwd,
-      oneLiner: $onLiner,
-      petName: $petName,
-      imageUrl: $imageUrl,
-    },
-    error: function (xhr, status, error) {
-      if (status == 400) {
-        alert('존재하지 않는 정보입니다.');
+async function signUp(event) {
+  event.preventDefault();
+
+  const form = new FormData();
+
+  const email = document.querySelector('#signUpEmail').value;
+  const name = document.querySelector('#signUpName').value;
+  const password = document.querySelector('#signUpPwd').value;
+  const confirmPassword = document.querySelector('#signUpConfirmPwd').value;
+  const pet_name = document.querySelector('#signUpPetName').value;
+  const newFile = document.querySelector('#newFile').files[0];
+
+  const extension =
+    '.' +
+    newFile.name
+      .substring(newFile.name.length - 5, newFile.name.length)
+      .toLowerCase()
+      .split('.')[1];
+  const allowedExtensions = ['.png', '.jpg', '.jpeg', '.jfif', '.exif', '.tiff', '.bmp', '.gif'];
+
+  if (!allowedExtensions.includes(extension) || !newFile.type.startsWith('image/')) {
+    alert('이미지 파일만 업로드 가능합니다.');
+    return;
+  }
+  form.append('newFile', newFile);
+  form.append('email', email);
+  form.append('name', name);
+  form.append('password', password);
+  form.append('confirmPassword', confirmPassword);
+  form.append('pet_name', pet_name);
+
+  await fetch('/signup', {
+    method: 'POST',
+    body: form,
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      const errorMessage = res.errorMessage;
+      // 회원가입 완료 시 메인 페이지로 이동
+      if (errorMessage) {
+        alert(res.errorMessage);
+      } else {
+        alert(res.message);
+        window.location.href = '/';
       }
-      window.location.href = '/home.html';
-    },
-    success: function () {
-      callback();
-    },
-  });
+    });
 }
 
-$logoutBtn.addEventListener('click', () => {
-  $.ajax({
-    type: 'DELETE',
-    url: `/logout/${userId}`,
-    error: function (xhr, status, error) {
-      if (status == 400) {
-        alert('존재하지 않는 정보입니다.');
-      }
-      window.location.href = '/';
-    },
-    success: function () {
-      callback();
-    },
-  });
-});
-
-
-function savePost() {
-  let title = $title;
-  let content = $content;
-  $.ajax({
-    type: 'POST',
-    url: `/posts`,
-    data: {
-      title: title,
-      content: content,
-    },
-    error: function (xhr, status, error) {
-      if (status == 400) {
-        alert('존재하지 않는 정보입니다.');
-      }
-      window.location.href = '/home.html';
-    },
-    success: function () {
-      callback();
-    },
-  });
-}
-
-function printPosts(callback) {
-  $('.postBox').empty();
-  $.ajax({
-    type: 'GET',
-    url: `/posts`,
-    success: function (response) {
-      callback(response['posts']);
-    },
-  });
-}
+signUpSubmitBtn.addEventListener('submit', signUp);
