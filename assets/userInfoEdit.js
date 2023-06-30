@@ -15,6 +15,13 @@ async function userInfoEdit(event) {
   const one_line_introduction = document.querySelector('#onLiner').value;
   const newFile = document.querySelector('#newFile').files[0];
 
+  const extension = newFile.name.split('.')[1];
+  const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
+
+  if (!allowedExtensions.includes(extension) || !newFile.type.startsWith('image/')) {
+    alert('이미지 파일만 업로드 가능합니다.');
+    return;
+  }
   //   if (!newFile) newFile = user_info.image_url.file.path;
   form.append('newFile', newFile);
   form.append('name', name);
