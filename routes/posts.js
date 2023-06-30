@@ -17,11 +17,13 @@ router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
+    const imageTag = filepath ? `<img src="${filepath}" alt="게시글 이미지">` : '';
+    const updatedContent = `${content} ${imageTag}`;
 
     const post = await Post.create({
       User_id,
       title,
-      content,
+      content: updatedContent,
       Name: name,
     });
 
@@ -96,7 +98,7 @@ router.get('/lookup', async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(400).json({
-      message: '게시글 검색에 실패하였습니다.',
+      errorMessage: '게시글 검색에 실패하였습니다.',
     });
   }
 });
@@ -168,7 +170,7 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
       },
     });
 
-    return res.status(200).json({ data: '게시글이 삭제되었습니다.' });
+    return res.status(200).json({ message: '게시글이 삭제되었습니다.' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 삭제에 실패했습니다.' });
@@ -183,7 +185,7 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
   try {
     const post = await Post.findByPk(post_id);
     if (!post) {
-      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+      return res.status(404).json({ errorMessage: '게시글을 찾을 수 없습니다.' });
     }
 
     const existingLike = await Like.findOne({
@@ -207,7 +209,7 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
+    return res.status(500).json({ errorMessage: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
   }
 });
 

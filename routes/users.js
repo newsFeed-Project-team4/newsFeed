@@ -33,7 +33,7 @@ router.post('/signup', uploadMiddleware, async (req, res) => {
       return res.status(412).json({ errorMessage: '패스워드와 패스워드확인이 다릅니다.' });
 
     const existUser = await User.findOne({ where: { email } });
-    if (existUser) return res.status(409).json({ message: '이미 존재하는 이메일입니다.' });
+    if (existUser) return res.status(409).json({ errorMessage: '이미 존재하는 이메일입니다.' });
 
     const hashPassword = await bcrypt.hash(password, salt);
 
@@ -79,9 +79,7 @@ router.post('/login', async (req, res) => {
 
     await Token.create({ token_id: refreshToken, User_id: user.user_id });
     res.cookie('accessToken', `Bearer ${accessToken}`);
-    return res
-      .status(200)
-      .json({ message: `${userInfo.name}님 환영합니다.`, accessToken, userInfo });
+    return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, userInfo });
   }
 
   try {
@@ -101,9 +99,7 @@ router.post('/login', async (req, res) => {
     });
 
     res.cookie('accessToken', `Bearer ${accessToken}`);
-    return res
-      .status(200)
-      .json({ message: `${userInfo.name}님 환영합니다.`, accessToken, userInfo });
+    return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, userInfo });
   } catch (error) {
     // refreshToken이 만료되었을 경우
     // 두 토큰을 전부 생성
@@ -116,9 +112,7 @@ router.post('/login', async (req, res) => {
       await Token.destroy({ where: { User_id: user.user_id } });
       await Token.create({ token_id: refreshToken, User_id: user.user_id });
       res.cookie('accessToken', `Bearer ${accessToken}`);
-      return res
-        .status(200)
-        .json({ message: `${userInfo.name}님 환영합니다.`, accessToken, userInfo });
+      return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, userInfo });
     }
     console.log(error);
     return res.status(500).json({ errorMessage: '로그인에 실패하였습니다.' });
@@ -140,7 +134,7 @@ router.get('/login', authMiddleware, async (req, res) => {
       where: { User_id: [...loginUserIds] },
     });
 
-    return res.status(200).json({ loginLists: UserInfos });
+    return res.status(200).json({ message: UserInfos });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ errorMessage: '로그인한 유저 정보 조회에 실패하였습니다.' });

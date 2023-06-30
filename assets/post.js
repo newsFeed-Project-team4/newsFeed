@@ -1,33 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {});
 
-const postSubmitBtn = document.querySelector('#postSubmit');
+const postSubmitBtn = document.querySelector('.postForm');
 
-function savePost(event) {
+async function savePost(event) {
   event.preventDefault();
-  const formData = new FormData();
 
-  const title = document.querySelector('#postTitle');
-  const content = document.querySelector('#postContent');
+  const form = new FormData();
 
-  const newPost = {
-    title: title,
-    content: content,
-  };
+  const title = document.querySelector('#postTitle').value;
+  const content = document.querySelector('#postContent').value;
+  const newFile = document.querySelector('#newFile').files[0];
 
-  fetch('http://127.0.0.1:3018/posts', {
+  form.append('newFile', newFile);
+  form.append('title', title);
+  form.append('content', content);
+
+  await fetch('/posts', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(newPost),
+    body: form,
   })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data);
-    })
-    .catch((error) => {
-      console.log(error);
+    .then((res) => res.json())
+    .then((res) => {
+      const errorMessage = res.errorMessage;
+      // 게시글 작성 완료 시 메인 페이지로 이동
+      if (errorMessage) {
+        alert(res.errorMessage);
+        window.location.reload();
+      } else {
+        alert(res.message);
+        window.location.href = '/';
+      }
     });
 }
 
-postSubmitBtn.addEventListener('click', savePost);
+postSubmitBtn.addEventListener('submit', savePost);

@@ -36,6 +36,6 @@ const upload = multer({
   }),
   limits: { fieldSize: 1024 * 1024 },
 });
-
+console.log(upload);
 const uploadMiddleware = upload.single('newFile');
 module.exports = uploadMiddleware;
