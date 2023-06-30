@@ -240,12 +240,18 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
       }
     }
 
+    //받아온 파일값이 없을경우 저장된 이미지값 불러옴
+    let image = filepath;
+    if (!filepath) {
+      image = userInfo.image_url;
+    }
+
     //꼭 값을 넣을 필요 없는 한마디, 펫이름, 프로필 이미지가 값이 없을 경우 대체
     // if (!oneLiner) oneLiner = '한 마디는 없습니다.';
     // if (!petName) petName = '반려동물은 없습니다.';
     // if (!imageUrl) imageUrl = '대체 사진 url';
     await userInfo.update(
-      { name, one_line_introduction, image_url: filepath, pet_name },
+      { name, one_line_introduction, image_url: image, pet_name },
       {
         where: {
           [Op.and]: [{ User_id: user.user_id }],
