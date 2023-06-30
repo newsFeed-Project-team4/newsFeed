@@ -18,8 +18,6 @@
         <div class="titleName">
           <h3>반려동물 이야기</h3>
         </div>
-        <div id="weather-container"></div>
-        <script src="weather.js"></script>
         <div class="search">
           <input id="searchBox" />
           <button id="searchBtn">검색</button>
@@ -27,9 +25,6 @@
       </div>
     </header>
     <main>
-      <button id="toggleButton">새 가족을 찾아보세요!</button>
-      <div id="animal-container"></div>
-      <script src="animals.js"></script>
       <div class="titleBtns">
         <button type="button" class="writePage" onclick="writePage()">게시글 작성</button>
         <button type="button" class="printPosts" onclick="printPosts()">전체 게시글 조회</button>
@@ -106,7 +101,6 @@
           <div class="imgBox"></div>
           <label>확인용</label>
         </div>
-        <<<<<<< HEAD
         <div class="postBottomBox">
           <div class="imgBox"></div>
           <label>확인용</label>
@@ -116,70 +110,52 @@
           <label>확인용</label>
         </div>
       </div>
-      <form action="/" class="postForm" enctype="multipart/form-data">
-        <label>이미지 테스트</label><br />
-        <input type="file" id="newFile" name="newFile" />
-        <button type="submit">Upload</button>
-      </form>
-      ======= >>>>>>> f6a2ea2782f42d9e55f4e9394e977a7ac8f46e45
     </main>
     <footer></footer>
     <script>
-            //모달 창 열기
-            function signUpModal() {
-              if ($('#modal2').css('display') == 'none') {
-                $('#modal2').show();
-              }
-            }
-            function close2() {
-              if ($('#modal2').css('display') != 'none') {
-                $('#modal2').hide();
-              }
-            }
+      //모달 창 열기
+      function signUpModal() {
+        if ($('#modal2').css('display') == 'none') {
+          $('#modal2').show();
+        }
+      }
+      function close2() {
+        if ($('#modal2').css('display') != 'none') {
+          $('#modal2').hide();
+        }
+      }
 
-            async function sign_in() {
-              let email = $('#inputEmail').val();
-              let password = $('#inputPWD').val();
-              $.ajax({
-                type: 'POST',
-                url: '/login',
-                data: {
-                  email: email,
-                  password: password,
-                },
-                success: function (response) {
-                  const objString = JSON.stringify(response.userInfo);
-                  localStorage.setItem('response', objString);
-                  alert(response.message);
-                  window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
-                },
-                error: function (error) {
-                  alert(error.responseJSON.errorMessage);
-                },
-              });
-            }
+      async function sign_in() {
+        let email = $('#inputEmail').val();
+        let password = $('#inputPWD').val();
+        $.ajax({
+          type: 'POST',
+          url: '/login',
+          data: {
+            email: email,
+            password: password,
+          },
+          success: function (response) {
+            const objString = JSON.stringify(response.userInfo);
+            localStorage.setItem('response', objString);
+            alert(response.message);
+            window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
+          },
+          error: function (error) {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
 
-      <<<<<<< HEAD
-            //게시글 작성 버튼
-            function writePage() {
-              alert('로그인 후 이용 가능합니다.');
-            }
-      =======
-              //게시글 작성 버튼
-              function writePage(){
-                  alert("로그인 후 이용 가능합니다.");
-              }
+      //게시글 작성 버튼
+      function writePage() {
+        alert('로그인 후 이용 가능합니다.');
+      }
 
-              //전체 게시글 조회
-              function printPosts(){
-                  window.location.replace(`/postView.html`);
-              }
-      >>>>>>> f6a2ea2782f42d9e55f4e9394e977a7ac8f46e45
-
-            //전체 게시글 조회
-            function printPosts() {
-              window.location.replace(`/postRead.html`);
-            }
+      //전체 게시글 조회
+      function printPosts() {
+        window.location.replace(`/postView.html`);
+      }
     </script>
   </body>
 </html>
