@@ -10,18 +10,25 @@
     integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
     crossorigin="anonymous"
   ></script>
+  <script src="./userInfoEdit.js" defer></script>
 </head>
 <body>
     <header>
         <div class="mytitle">
-            <h3>반려동물 이야기</h3>
+            <div class="titleName">
+                <h3>반려동물 이야기</h3>    
+            </div>  
+            <div class="search">
+                <input id="searchBox"/>
+                <button id="searchBtn">검색</button>
+            </div>      
         </div>
     </header>
     <main>
         <div class="titleBtns">
             <button type="button"
             class="writePage"
-            onclick="window.location.href = '/postWrite.html'">게시글 작성</button>
+            onclick="postWrite()">게시글 작성</button>
             <button type="button"
             class="printPosts"
             onclick="printPosts()">전체 게시글 조회</button>
@@ -29,50 +36,39 @@
         <div class="modal" id="modal">
             <div class="form">
               <div>
-                <!-- <div class="input">
-                  <label for="email">email</label>
-                  <input id="email" class="modal-input"/>
-                </div> -->
-                <div class="input">
-                  <label for="name">이름</label>
-                  <input id="name" class="modal-input" value=""/>
-                </div>
-                <div class="input">
-                  <label for="pwd">비밀번호</label>
-                  <input id="pwd" class="modal-input" type="password" />
-                </div>               
-                <div class="input">
-                    <label for="petName">반려동물명</label>
-                    <input id="petName" class="modal-input" value=""/>
-                  </div>
-                <div class="input">
-                  <label for="onLiner">한마디</label>
-                  <input id="onLiner" value=""/>
-                </div> 
-                <div class="textarea">
-                    <label for="imageUrl">사진 url</label>
-                    <textarea id="imageUrl"></textarea>
-                  </div>
-                  <!-- 위 사진 url을 아래 파일 업로드로 변경 예정 -->
-                  <!-- <div> 
-                    <label>사진</label>
-                    <form action="/posts" method="Post" enctype="multipart/form-data">
-                        <input type="file" name="newFile" id="signUpImgUrl"/>
-                         <button type="submit">Upload</button> 
-                      </form>
-                  </div> -->
-              </div>
-              <div class="input" id="afterPwd1">
-                <label for="afterPwd">변경할 비밀번호</label>
-                <input id="afterPwd" class="modal-input" type="password" />
-              </div> 
-              <div class="input" id="confirmPwd1">
-                <label for="confirmPwd">비밀번호 확인</label>
-                <input id="confirmPwd" class="modal-input" type="password" />
-              </div> 
-              <button class="passwordChangeBtn" onclick="passwordChange()">비밀번호 변경</button>
-              <button class="modal-btn" onclick="userInfoEditBtn(user_id)">수정</button>
-              <button class="modal-btn" id="close1" onclick="close1()">닫기</button>
+                <form class="userInfoEditForm" enctype="multipart/form-data">
+                    <div class="input">
+                        <label for="name">이름</label>
+                        <input id="name" class="modal-input" value=""/>
+                    </div>
+                    <div class="input">
+                        <label for="pwd">비밀번호</label>
+                        <input id="pwd" class="modal-input" type="password" />
+                    </div>               
+                    <div class="input">
+                          <label for="petName">반려동물명</label>
+                          <input id="petName" class="modal-input" value=""/>
+                    </div>
+                    <div class="input">
+                        <label for="onLiner">한마디</label>
+                        <input id="onLiner" value=""/>
+                    </div> 
+                    <div class="userInfoEditImgBox">
+                        <input type="file" id="newFile" name="newFile" />
+                    </div> 
+                    </div>
+                    <div class="input" id="afterPwd1">
+                      <label for="afterPwd">변경할 비밀번호</label>
+                      <input id="afterPwd" class="modal-input" type="password" />
+                    </div> 
+                    <div class="input" id="confirmPwd1">
+                      <label for="confirmPwd">비밀번호 확인</label>
+                      <input id="confirmPwd" class="modal-input" type="password" />
+                    </div> 
+                    <button class="modal-btn" id="userInfoEdit">수정</button>                    
+                </form>
+                <button class="passwordChangeBtn" onclick="passwordChange()">비밀번호 변경</button>
+                <button class="modal-btn" id="close1" onclick="close1()">닫기</button>
             </div>
         </div>
         <div class="firstBox">
@@ -129,25 +125,7 @@
     <footer>
 
     </footer>
-
-    <script src="./api.js" type="module"></script>
     <script> 
-    
-            //모달 창 열기
-            function userInfoBtn(){
-                if($('.modal').css("display") == "none"){
-                    $('.modal').show();
-                }
-            }
-            function close(){
-                if($('.modal').css("display") != "none"){
-                    $('.modal2').hide();
-                }
-            }
-        function passwordChange(){
-            const userEmail = localStorage.getItem("email");
-        }
-
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const user_id = urlParams.get("id");
@@ -157,36 +135,11 @@
         $('input[id=name]').attr('value',user_info.name);
         $('input[id=petName]').attr('value',user_info.pet_name);
         $('input[id=onLiner]').attr('value',user_info.one_line_introduction);
-        $('#imageUrl').append(user_info.image_url);
+        $('input[id=newFile]').attr('value',user_info.image_url);
 
         document.getElementById("userInfoName").innerHTML = user_info.name;
         document.getElementById("profile_image").src = user_info.image_url;
-        //회원 정보 수정
-        function userInfoEditBtn(user_id) {
-            $.ajax({
-                type: 'PUT',
-                url: `/login/${user_id}`,
-                data: {
-                    name: $('#name').val(),
-                    beforePassword: $('#pwd').val(),
-                    afterPassword: $('#afterPwd').val(),
-                    confirmPassword:$('#confirmPwd').val(),
-                    one_line_introduction:$('#onLiner').val(),
-                    pet_name: $('#petName').val(),
-                    image_url:$('#imageUrl').val(),
-                },
-                error: function (error) {
-                alert(error.responseJSON.errorMessage);
-            },
-            success: function (response) {                
-                window.localStorage.removeItem('response');
-                const objString = JSON.stringify(response.userInfo);
-                localStorage.setItem("response", objString);
-                alert(response.message);
-                window.location.replace(`/home.html?id=${response.userInfo.User_id}`);
-            },
-            });
-        }
+        
         //모달 창 열기
         function userInfoBtn(){
             if($('#modal').css("display") == "none"){
@@ -210,32 +163,10 @@
             }
         }
 
-        //게시글 부분 일단 보류
-    // $(document).ready(function () {
-    //     passwordChange();
-    //     function getPosts(posts){
-    //         for (let i = 0; i < posts.length; i++) {
-    //             post_list(posts[i]);
-    //         }
-    //     };
-    // })
-    // function getPosts(posts){
-    //     for (let i = 0; i < posts.length; i++) {
-    //         post_list(posts[i]);
-    //     }
-    // }
-    // function post_list(item) {
-    //     let htmlTemp = `<div>
-    //                 <label>${item['title']}</label>
-    //                 <p>${item['content']}</p>
-    //             </div>`
-    //     $(".postBox").append(htmlTemp);
-    //   }
-
     //로그아웃 
     function logoutBtn(){
         $.ajax({
-            type: 'DELETE',
+            type: 'POST',
             url: `/logout/${user_id}`,
             error: function (error) {
                 alert(error.responseJSON.errorMessage);
@@ -248,15 +179,18 @@
         });
     }
 
-    //홈페이지 이동->게시글 조회에서 사용하자
-    //html 버튼
-    // <button type="button"
-    //         class="homeBtn"
-    //         onclick="homeBtn()">메인페이지 이동</button>
-    //스크립트 부분
-    // function homeBtn(){
-    //     window.location.replace(`/home.html?id=${user_info.User_id}`);
-    // }
+    //게시글 작성
+    function postWrite(){
+        window.location.replace(`/postWrite.html?id=${user_info.User_id}`);
+    }
+
+    //전체 게시글 조회
+    function printPosts(){
+        const userInfo = JSON.parse(localStorage.getItem('response'));
+        if(!userInfo) 
+            window.location.replace(`/postRead.html`);
+        else window.location.replace(`/postRead.html?id=${userInfo.User_id}`);
+    }
     </script>
 </body>
 </html>
