@@ -32,12 +32,21 @@
         </div>
         </div> 
             <button class="submit" onclick="savePost()">내용 저장</button>
-            <button class="hombtn" onclick="window.location.href = '/home.html'">홈페이지로 이동</button>
+            <button class="hombtn" onclick="homeBack()">홈페이지로 이동</button>
         </div>
     </main>
     <footer>
 
     </footer>
     <script src="api.js" type="module"></script>
+    <script>
+        function homeBack(){
+            const userInfo = JSON.parse(localStorage.getItem('response'));
+            if(!userInfo){
+                window.location.replace(`/`);
+            }
+            else window.location.replace(`/home.html?id=${userInfo.User_id}`);
+        }
+    </script>
 </body>
 </html>
