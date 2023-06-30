@@ -16,10 +16,15 @@ async function userInfoEdit(event) {
   const newFile = document.querySelector('#newFile').files[0];
 
   if (newFile) {
-    const extension = newFile.name.split('.')[1];
+    const extension = newFile.name.split('.');
+    //만약 이름이 ... 일경우를 제일 뒷값이 파일값
+    let index = 0;
+    for (let i in extension) {
+      index = i;
+    }
     const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
 
-    if (!allowedExtensions.includes(extension) || !newFile.type.startsWith('image/')) {
+    if (!allowedExtensions.includes(extension[index]) || !newFile.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
       return;
     }
