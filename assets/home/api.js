@@ -1,89 +1,55 @@
-const $name = document.querySelector('#name');
-const $pwd = document.querySelector('#pwd');
-const $email = document.querySelector('#email');
-const $imageUrl = document.querySelector('#imageUrl');
-const $petName = document.querySelector('#petName');
-const $onLiner = document.querySelector('#onLiner');
-const $afterPwd = document.querySelector('#afterPwd');
-const $confirmPwd = document.querySelector('#confirmPwd');
-const $logoutBtn = document.querySelector('.logoutBtn');
+document.addEventListener('DOMContentLoaded', () => {});
 
-const $title = document.querySelector('#title');
-const $content = document.querySelector('#content');
+//회원가입 form
+const signUpSubmitBtn = document.querySelector('.signUpForm');
 
-const { User } = require('../../models');
-async function userInfoEditBtn(userEmail, callback) {
-  const user = await User.findOne({ where: { email: userEmail } });
-  $.ajax({
-    type: 'PUT',
-    url: `/login/${user.userId}`,
-    data: {
-      email: $email,
-      name: $name,
-      beforePassword: $pwd,
-      afterPassword: $afterPwd,
-      confirmPassword: $confirmPwd,
-      oneLiner: $onLiner,
-      petName: $petName,
-      imageUrl: $imageUrl,
-    },
-    error: function (xhr, status, error) {
-      if (status == 400) {
-        alert('존재하지 않는 정보입니다.');
-      }
-      window.location.href = '/home.html';
-    },
-    success: function () {
-      callback();
-    },
-  });
-}
+async function signUp(event) {
+  event.preventDefault();
 
-$logoutBtn.addEventListener('click', () => {
-  $.ajax({
-    type: 'DELETE',
-    url: `/logout/${userId}`,
-    error: function (xhr, status, error) {
-      if (status == 400) {
-        alert('존재하지 않는 정보입니다.');
-      }
-      window.location.href = '/';
-    },
-    success: function () {
-      callback();
-    },
-  });
-});
+  const form = new FormData();
 
-function savePost() {
-  let title = $title;
-  let content = $content;
+  const email = document.querySelector('#signUpEmail').value;
+  const name = document.querySelector('#signUpName').value;
+  const password = document.querySelector('#signUpPwd').value;
+  const confirmPassword = document.querySelector('#signUpConfirmPwd').value;
+  const pet_name = document.querySelector('#signUpPetName').value;
+  const newFile = document.querySelector('#newFile').files[0];
+
+  if (newFile) {
+    const extension = newFile.name.split('.');
+    //만약 이름이 ... 일경우를 제일 뒷값이 파일값
+    let index = 0;
+    for (let i in extension) {
+      index = i;
+    }
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
+
+    if (!allowedExtensions.includes(extension[index]) || !newFile.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+    form.append('newFile', newFile);
+  }
+  form.append('email', email);
+  form.append('name', name);
+  form.append('password', password);
+  form.append('confirmPassword', confirmPassword);
+  form.append('pet_name', pet_name);
+
   $.ajax({
     type: 'POST',
-    url: `/posts`,
-    data: {
-      title: title,
-      content: content,
+    url: `/signup`,
+    processData: false,
+    contentType: false,
+    data: form,
+    error: function (error) {
+      alert(error.responseJSON.errorMessage);
     },
-    error: function (xhr, status, error) {
-      if (status == 400) {
-        alert('존재하지 않는 정보입니다.');
-      }
-      window.location.href = '/home.html';
-    },
-    success: function () {
-      callback();
+    success: function (response) {
+      alert(response.message);
+      window.location.href = '/';
     },
   });
 }
 
-function printPosts(callback) {
-  $('.postBox').empty();
-  $.ajax({
-    type: 'GET',
-    url: `/posts`,
-    success: function (response) {
-      callback(response['posts']);
-    },
-  });
-}
+signUpSubmitBtn.addEventListener('submit', signUp);

@@ -177,15 +177,21 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
     }
 
     //얘는 프론트에서 input을 줬을 때만 실행이 되게끔 설정이 가능해서 뺄 가능성 있음.
-    if (!password)
+    // if (!password)
+    //   return res.status(400).json({
+    //     errorMessage: `비밀번호가 입력이 되지 않았습니다.`,
+    //   });
+
+    // const existChangePermission = await bcrypt.compare(password, user.password);
+    // if (!existChangePermission)
+    //   return res.status(400).json({
+    //     errorMessage: `수정하려는 계정의 비밀번호와 일치하지 않아 수정할 수 없습니다.`,
+    //   });
+
+    // 프론트에서 비밀번호(beforePassword) 받아와서 확인
+    if (!beforePassword)
       return res.status(400).json({
         errorMessage: `비밀번호가 입력이 되지 않았습니다.`,
-      });
-
-    const existChangePermission = await bcrypt.compare(password, user.password);
-    if (!existChangePermission)
-      return res.status(400).json({
-        errorMessage: `수정하려는 계정의 비밀번호와 일치하지 않아 수정할 수 없습니다.`,
       });
 
     if (!confirmPassword || !afterPassword)
@@ -239,12 +245,18 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
       }
     }
 
+    //받아온 파일값이 없을경우 저장된 이미지값 불러옴
+    let image = filepath;
+    if (!filepath) {
+      image = userInfo.image_url;
+    }
+
     //꼭 값을 넣을 필요 없는 한마디, 펫이름, 프로필 이미지가 값이 없을 경우 대체
     // if (!oneLiner) oneLiner = '한 마디는 없습니다.';
     // if (!petName) petName = '반려동물은 없습니다.';
     // if (!imageUrl) imageUrl = '대체 사진 url';
     await userInfo.update(
-      { name, one_line_introduction, image_url: filepath, pet_name },
+      { name, one_line_introduction, image_url: image, pet_name },
       {
         where: {
           [Op.and]: [{ User_id: user.user_id }],
