@@ -34,6 +34,7 @@
 
 .post:hover {
   transform: scale(1.02);
+  cursor: pointer;
 }
 
 .postTitle {
@@ -58,6 +59,10 @@
 .like {
   font-weight: bold;
   padding-top: 8px;
+}
+
+.like:hover {
+  cursor: pointer;
 }
 
 .buttons {
