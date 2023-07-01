@@ -87,6 +87,10 @@
                         </div>
                         <div class="userInfo">
                             <p id="userInfoName"></p>
+                            <p id="userInfoPetName"></p>
+                        </div>
+                        <div class="userOneLineComment">
+                            <p id="userOneLine"></p>
                         </div>
                     </div>
                     <div class="btnBox">
@@ -144,7 +148,9 @@
         $('input[id=onLiner]').attr('value',user_info.one_line_introduction);
         $('input[id=newFile]').attr('value',user_info.image_url);
 
-        document.getElementById("userInfoName").innerHTML = user_info.name;
+        document.getElementById("userInfoName").innerHTML = '이름: '+user_info.name;
+        document.getElementById("userInfoPetName").innerHTML = '반려동물 명: '+user_info.pet_name;
+        document.getElementById("userOneLine").innerHTML = '한마디: '+user_info.one_line_introduction;
         if(!user_info.image_url) document.getElementById("profile_image").src = '../image/cat.jpg';
         else document.getElementById("profile_image").src = user_info.image_url;
         

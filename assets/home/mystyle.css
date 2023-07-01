@@ -123,9 +123,8 @@ label {
 .userInfoBox {
   margin-left: 3%;
   background-color: aliceblue;
-  border-radius: 3px;
 
-  padding: 3px 3px 3px 3px;
+  padding: 8px;
 }
 
 .postBox{
