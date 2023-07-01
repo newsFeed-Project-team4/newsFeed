@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="/mystyle.css" rel="stylesheet" />
+    <link href="./mystyle.css" rel="stylesheet" />
     <script
     src="https://code.jquery.com/jquery-3.5.1.js"
     integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
     crossorigin="anonymous"
   ></script>
-  <script src="./userInfoEdit.js" defer></script>
-  <script src="animals.js"></script>
+  <script src="../userInfoEdit.js" defer></script>
+  <script src="../animals.js"></script>
 </head>
 <body>
     <header>
@@ -19,10 +19,16 @@
             <div class="titleName">
                 <h3>반려동물 이야기</h3>
             </div>  
-            <div class="search">
-                <input id="searchBox"/>
-                <button id="searchBtn">검색</button>
-            </div>      
+            <form class="search">
+                <select id="search-options">
+                  <option value="searchNone">선택</option>
+                  <option value="searchTitle">제목</option>
+                  <option value="searchContent">제목&내용</option>
+                  <option value="searchAll">통합검색</option>
+                </select>
+                <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
+                <button id="search-btn">검색</button>
+              </form>      
         </div>
     </header>
     <main>
@@ -77,7 +83,7 @@
                 <div class="loginBox" id="loginBox">
                     <div>
                         <div class="imageBox">
-                            <img id="profile_image" width="100" height="100">
+                            <img id="profile_image" width="150" height="150">
                         </div>
                         <div class="userInfo">
                             <p id="userInfoName"></p>
@@ -91,17 +97,17 @@
             </div>
             
             <div class="postBox">
-                <div>
-                    <label>확인용</label>
+                <div class="post">
+                    <p>확인용</p>
                 </div>
-                <div>
-                    <label>확인용</label>
+                <div class="post">
+                    <p>확인용</p>
                 </div>
-                <div>
-                    <label>확인용</label>
+                <div class="post">
+                    <p>확인용</p>
                 </div>
-                <div>
-                    <label>확인용</label>
+                <div class="post">
+                    <p>확인용</p>
                 </div>
             </div>
         </div>
@@ -131,7 +137,7 @@
         const urlParams = new URLSearchParams(queryString);
         const user_id = urlParams.get("id");
         const user_info = JSON.parse(localStorage.getItem('response'));
-        console.log(user_info);
+        
         //value에 값넣기
         $('input[id=name]').attr('value',user_info.name);
         $('input[id=petName]').attr('value',user_info.pet_name);
@@ -139,8 +145,13 @@
         $('input[id=newFile]').attr('value',user_info.image_url);
 
         document.getElementById("userInfoName").innerHTML = user_info.name;
-        document.getElementById("profile_image").src = user_info.image_url;
+        if(!user_info.image_url) document.getElementById("profile_image").src = '../image/cat.jpg';
+        else document.getElementById("profile_image").src = user_info.image_url;
         
+        $(document).ready(()=>{
+            getPosts();
+        })
+
         //모달 창 열기
         function userInfoBtn(){
             if($('#modal').css("display") == "none"){
@@ -182,16 +193,82 @@
 
     //게시글 작성
     function postWrite(){
-        window.location.replace(`/postWrite.html?id=${user_info.User_id}`);
+        window.location.replace(`/writePost/writePost.html?id=${user_info.User_id}`);
     }
 
     //전체 게시글 조회
     function printPosts(){
         const userInfo = JSON.parse(localStorage.getItem('response'));
         if(!userInfo) 
-            window.location.replace(`/postView.html`);
-        else window.location.replace(`/postView.html?id=${userInfo.User_id}`);
+            window.location.replace(`/post/post.html`);
+        else window.location.replace(`/post/post.html?id=${userInfo.User_id}`);
     }
+
+    //게시글 get
+    function getPosts(){
+            $.ajax({
+                type: 'GET',
+                url: `/posts`,
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+                },
+                success: function (response) {
+                    const posts = response.posts;
+                    
+                    let arr = new Array(posts.length);
+                    for(let i = 0; i < arr.length; i++){
+                        arr[i] = new Array(2);
+                    }
+
+                    for(let i in posts){
+                        arr[i][0] = posts[i].Likes.length;
+                        arr[i][1] = posts[i];
+                    }
+                    arr.sort((a,b)=>b[0]-a[0]);
+                    console.log(arr);
+                    //title만 뜨는? 박스
+                    $('.postBox').empty();
+                    for(let i = 0; i< 5; i++){                
+                        const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
+                                                <div>
+                                                      <p style="text-align:left;">${arr[i][1].title}</p>
+                                                    
+                                                      <p style="text-align:right;">${arr[i][1].Name} ❤️${arr[i][0]}</p>
+                                                  </div>
+                                            </div>`
+                        $('.postBox').append(postInnerHtml);
+                    }
+                    //밑 사진만 뜨는? 박스
+                    let imageArr = new Array(posts.length);
+                    for(let i = 0; i < arr.length; i++){
+                        imageArr[i] = new Array(2);
+                    }
+                    for(let i in posts){
+                        if(!posts[i].content){
+                            imageArr[i][0] = posts[i].Likes.length;
+                            imageArr[i][1] = posts[i];
+                        }
+                    }
+                    imageArr.sort((a,b)=>b[0]-a[0]);
+                    console.log(imageArr);
+                    $('.postImgBox').empty();
+                    for(let i = 0; i< 5; i++){
+                      let img = '';
+                      imageArr[i][1].image_url ? img = imageArr[i][1].image_url : img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />';
+                      
+                      const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${imageArr[i][1].post_id})">
+                                              <div class="imgBox">${img}</div>
+                                              <p style="text-align:center;">❤️${imageArr[i][0]}</p>
+                                            </div>`
+                      $('.postImgBox').append(postInnerHtml);
+                    }
+                },
+            });
+        }
+        //게시글 상세 조회페이지 이동
+        function postDetail(post_id){              
+            window.location.href =`/detailPost/detailPost.html?postId=${post_id}`;
+        }
     </script>
 </body>
 </html>

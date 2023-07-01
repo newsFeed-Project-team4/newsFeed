@@ -57,7 +57,7 @@ router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
 router.get('/posts', async (req, res) => {
   try {
     const posts = await Post.findAll({
-      attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+      attributes: ['post_id', 'User_id', 'title', 'Name', 'content', 'image_url', 'created_at'],
       order: [['created_at', 'DESC']],
       include: [
         {
