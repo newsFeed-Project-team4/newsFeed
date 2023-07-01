@@ -8,8 +8,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ UserInfo, Token }) {
-      this.hasOne(UserInfo, { sourceKey: 'user_id', foreignKey: 'User_id' });
-      this.hasOne(Token, { sourceKey: 'user_id', foreignKey: 'User_id' });
+      this.hasOne(UserInfo, {
+        sourceKey: 'user_id',
+        foreignKey: 'User_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasOne(Token, {
+        sourceKey: 'user_id',
+        foreignKey: 'User_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   User.init(

@@ -4,11 +4,239 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <link href="./home/mystyle.css" rel="stylesheet" />
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.js"
+      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      crossorigin="anonymous"
+    ></script>
+    <script src="./home/api.js" defer></script>
   </head>
   <body>
-    <form action="/posts" method="Post" enctype="multipart/form-data">
-      <input type="file" name="newFile" />
-      <button type="submit">Upload</button>
-    </form>
+    <header>
+      <div class="mytitle">
+        <div class="titleName">
+          <h3>반려동물 이야기</h3>
+        </div>
+        <div id="weather-container"></div>
+        <script src="weather.js"></script>
+        <form class="search">
+          <select id="search-options">
+            <option value="searchNone">선택</option>
+            <option value="searchTitle">제목</option>
+            <option value="searchContent">제목&내용</option>
+            <option value="searchAll">통합검색</option>
+          </select>
+          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
+          <button id="search-btn">검색</button>
+        </form>
+      </div>
+    </header>
+    <main>
+      <button id="toggleButton">새 가족을 찾아보세요!</button>
+      <div id="animal-container"></div>
+      <script src="animals.js"></script>
+      <div class="titleBtns">
+        <button type="button" class="writePage" onclick="writePage()">게시글 작성</button>
+        <button type="button" class="printPosts" onclick="printPosts()">전체 게시글 조회</button>
+      </div>
+      <div class="modal" id="modal2">
+        <div class="form">
+          <div>
+            <form class="signUpForm" enctype="multipart/form-data">
+              <div>
+                <div class="input">
+                  <label for="signUpEmail">email</label>
+                  <input id="signUpEmail" class="modal-input" />
+                </div>
+                <div class="input">
+                  <label for="signUpName">이름</label>
+                  <input id="signUpName" class="modal-input" />
+                </div>
+                <div class="input">
+                  <label for="signUpPwd">비밀번호</label>
+                  <input id="signUpPwd" class="modal-input" type="password" />
+                </div>
+                <div class="input">
+                  <label for="signUpConfirmPwd">비밀번호 확인</label>
+                  <input id="signUpConfirmPwd" class="modal-input" type="password" />
+                </div>
+                <div class="input">
+                  <label for="signUpPetName">반려동물명</label>
+                  <input id="signUpPetName" class="modal-input" />
+                </div>
+                <div class="signUpImgBox">
+                  <input type="file" id="newFile" name="newFile" />
+                </div>
+              </div>
+              <button class="modal-btn" id="signUpSubmit">회원가입</button>
+            </form>
+          </div>
+          <div>
+            <button class="modal-btn" id="close2" onclick="close2()">닫기</button>
+          </div>
+        </div>
+      </div>
+      <div class="firstBox">
+        <div class="userInfoBox">
+          <div class="loginForm" id="loginForm">
+            <label>이메일:</label>
+            <input id="inputEmail" /><br />
+            <label>PWD:</label>
+            <input id="inputPWD" type="password" />
+            <div>
+              <button class="submit" onclick="sign_in()">로그인</button>
+            </div>
+            <div>
+              <button class="signUpModal" onclick="signUpModal()">회원가입</button>
+            </div>
+          </div>
+        </div>
+        <div class="postBox">
+          <div class="post">
+            <p>확인용</p>
+          </div>
+          <div class="post">
+            <p>확인용</p>
+          </div>
+          <div class="post">
+            <p>확인용</p>
+          </div>
+          <div class="post">
+            <p>확인용</p>
+          </div>
+        </div>
+      </div>
+      <div class="postImgBox">
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
+          <label>확인용</label>
+        </div>
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
+          <label>확인용</label>
+        </div>
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
+          <label>확인용</label>
+        </div>
+      </div>
+    </main>
+    <footer></footer>
+    <script>
+      //모달 창 열기
+      function signUpModal() {
+        if ($('#modal2').css('display') == 'none') {
+          $('#modal2').show();
+        }
+      }
+      function close2() {
+        if ($('#modal2').css('display') != 'none') {
+          $('#modal2').hide();
+        }
+      }
+
+      $(document).ready(()=>{
+            getPosts();
+        })
+
+        //로그인
+      async function sign_in() {
+        let email = $('#inputEmail').val();
+        let password = $('#inputPWD').val();
+        $.ajax({
+          type: 'POST',
+          url: '/login',
+          data: {
+            email: email,
+            password: password,
+          },
+          success: function (response) {
+            const objString = JSON.stringify(response.userInfo);
+            localStorage.setItem('response', objString);
+            alert(response.message);
+            window.location.replace(`/home/home.html?id=${response.userInfo.User_id}`);
+          },
+          error: function (error) {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
+
+      //게시글 작성 버튼
+      function writePage() {
+        alert('로그인 후 이용 가능합니다.');
+      }
+
+      //전체 게시글 조회
+      function printPosts() {
+        window.location.replace(`/post/post.html`);
+      }
+
+      //게시글 get
+      function getPosts(){
+            $.ajax({
+                type: 'GET',
+                url: `/posts`,
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+                },
+                success: function (response) {
+                    const posts = response.posts;
+                    
+                    let arr = new Array(posts.length);
+                    for(let i = 0; i < arr.length; i++){
+                        arr[i] = new Array(2);
+                    }
+
+                    for(let i in posts){
+                        arr[i][0] = posts[i].Likes.length;
+                        arr[i][1] = posts[i];
+                    }
+                    arr.sort((a,b)=>b[0]-a[0]);
+                    //title만 뜨는? 박스
+                    $('.postBox').empty();
+                    for(let i = 0; i< 5; i++){                
+                        const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
+                                                <div>
+                                                      <p style="text-align:left;">${arr[i][1].title}</p>
+                                                    
+                                                      <p style="text-align:right;">${arr[i][1].Name} ❤️${arr[i][0]}</p>
+                                                  </div>
+                                            </div>`
+                        $('.postBox').append(postInnerHtml);
+                    }
+                    //밑 사진만 뜨는? 박스
+                    let imageArr = new Array(posts.length);
+                    for(let i = 0; i < arr.length; i++){
+                        imageArr[i] = new Array(2);
+                    }
+                    for(let i in posts){
+                        if(!posts[i].content){
+                            imageArr[i][0] = posts[i].Likes.length;
+                            imageArr[i][1] = posts[i];
+                        }
+                    }
+                    imageArr.sort((a,b)=>b[0]-a[0]);
+                    console.log(imageArr);
+                    $('.postImgBox').empty();
+                    for(let i = 0; i< 5; i++){
+                      let img = '';
+                      imageArr[i][1].image_url ? img = imageArr[i][1].image_url : img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />';
+                      
+                      const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${imageArr[i][1].post_id})">
+                                              <div class="imgBox">${img}</div>
+                                              <p style="text-align:center;">❤️${imageArr[i][0]}</p>
+                                            </div>`
+                      $('.postImgBox').append(postInnerHtml);
+                    }
+                },
+            });
+        }
+        //게시글 상세 조회페이지 이동
+        function postDetail(post_id){              
+            window.location.href =`/detailPost/detailPost.html?postId=${post_id}`;
+        }
+    </script>
   </body>
 </html>

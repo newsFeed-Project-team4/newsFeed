@@ -1,0 +1,252 @@
+* {
+  box-sizing: border-box;
+  margin: 100;
+  padding: 100;
+  font-family: 'Gowun Dodum', sans-serif;
+}
+
+/* 전체 설정 */
+body {
+  min-height: 100vh;
+  background-color: var(--bg-header-color);
+}
+
+html,
+body {
+  min-width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.mytitle {
+  width: 100vw;
+  box-sizing: border-box;
+  height: 150px;
+
+  background-image: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+      ),
+      url("https://i.postimg.cc/WzFLRMgm/My-Photo-1218898596-0549.jpg");
+  background-position: center;
+  background-size: contain;
+
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 20px 0;
+}
+
+.mytitle .titleName {
+  height: 50px;
+}
+.mytitle .search {
+  margin: 10px 0 0 0;
+}
+
+.titleBtns {
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  justify-content: end;
+}
+
+.titleBtns > button {
+  margin-right: 10px;
+}
+
+.modal {
+  width: 100%;
+  height: 80%;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 5;
+  padding: 30px;
+  display: none;
+  align-items: center;
+}
+.show-modal {
+  display: block;
+}
+.form {
+  background: white;
+  border-radius: 5px;
+  width: 30%;
+  padding: 40px;
+  text-align: left;
+  font-size: 15px;
+  margin: auto;
+}
+.form > button {
+  margin-top: 5px;
+}
+.form div {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.modal-btn {
+  margin-top: 5px;
+}
+
+label {
+  display: inline;
+}
+.modal-input {
+  width: 150px;
+  font-size: 20px;
+}
+
+.show-box {
+  display: block;
+}
+
+.firstBox {
+  width: 90%;
+  height: 500px;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: start;
+
+  background-color: antiquewhite;
+
+  padding: 5px 5px 5px 0;
+  margin: 10px auto 10px auto;
+}
+
+.userInfoBox {
+  margin-left: 3%;
+  background-color: aliceblue;
+
+  padding: 8px;
+}
+
+.postBox{
+  width: 90%;
+  height: 490px;
+  margin-left: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content:center;
+  display: block;
+}
+.postBox > div {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.post{
+  width: 90%;
+  height: 93px;
+  background-color: aliceblue;
+  
+  margin: 10px;
+  padding: 10px;
+  justify-self: center;
+
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0);
+
+}
+.post>div{
+  margin: 3% 3% 3% 3%;
+}
+
+.postImgBox {
+  width: 90%;
+  height: 50%;
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  margin: 2.5% auto 2.5% auto;
+  padding: 2.5%;
+
+  background-color: rgb(232, 223, 199);
+}
+
+.postBottomBox {
+  padding: 10px;
+  margin-right: 2.5%;
+  margin-left: 2.5%;
+  
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  background-color: azure;
+}
+
+.imgBox {
+  background-color: greenyellow;
+  width: 200px;
+  height: 200px;
+
+  border-radius: 10px;
+
+}
+.imgBox>img{
+  width: 100%;
+  height: 100%;
+}
+
+.posts {
+  width: 90%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  margin: 3% auto auto auto;
+
+  color: aliceblue;
+  background-color: rgb(24, 34, 71);
+}
+
+.postsBox {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  background-color: green;
+  margin-top: 50px;
+}
+
+.posts {
+  background-color: #f9ffff;
+  box-shadow: 0px 0px 8px gray;
+  width: 400px;
+  height: 500px;
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.posts:hover {
+  cursor: pointer;
+}
+
+.posts > img {
+  width: 360px;
+  height: 390px;
+  border-radius: 30px;
+  padding: 20px 20px 20px 20px;
+}
+
+#animal-container {
+  text-align: center;
+  font-family: 'Helvetica', Arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 2;
+  height: auto;
+}
+
+#toggleButton {
+  margin-bottom: 10px;
+}

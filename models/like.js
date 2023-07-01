@@ -8,8 +8,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ UserInfo, Post }) {
-      this.belongsTo(UserInfo, { targetKey: 'User_id', foreignKey: 'User_id' });
-      this.belongsTo(Post, { targetKey: 'post_id', foreignKey: 'Post_id' });
+      this.belongsTo(UserInfo, {
+        targetKey: 'User_id',
+        foreignKey: 'User_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.belongsTo(Post, {
+        targetKey: 'post_id',
+        foreignKey: 'Post_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   Like.init(

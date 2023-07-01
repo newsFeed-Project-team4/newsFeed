@@ -1,0 +1,79 @@
+* {
+    box-sizing: border-box;
+    margin: 100;
+    padding: 100;
+    font-family: 'Gowun Dodum', sans-serif;
+  }
+  
+  /* 전체 설정 */
+  body {
+    min-height: 100vh;
+    background-color: var(--bg-header-color);
+  }
+  
+  html,
+  body {
+    min-width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    overflow-x: hidden;
+  }
+  .mytitle {
+    width: 100vw;
+    box-sizing: border-box;
+    height: 150px;
+  
+    background-image: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.5),
+        rgba(0, 0, 0, 0.5)
+        ),
+        url("https://i.postimg.cc/WzFLRMgm/My-Photo-1218898596-0549.jpg");
+    background-position: center;
+    background-size: contain;
+  
+    color: white;
+  
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 20px 0;
+  }
+
+  .postTitle{
+    width: 80%;
+    padding: 3%;
+    margin: 3% auto 3% auto;
+    
+    background-color: antiquewhite;
+  }
+
+  .postContent{    
+    width: 80%;
+    padding: 3%;
+    margin: 0 auto 3% auto;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgb(204, 238, 238);
+  }
+
+  .likeBtn{
+    text-align: center;
+  }
+
+  .titleBtns {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    justify-content: end;
+    margin-right: 10px;
+  }
+
+  .titleBtns > button {
+    margin-right: 10px;
+  }

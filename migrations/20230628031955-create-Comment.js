@@ -17,6 +17,7 @@ module.exports = {
           key: 'User_id',
         },
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       Post_id: {
         allowNull: false,
@@ -26,6 +27,7 @@ module.exports = {
           key: 'post_id',
         },
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       name: {
         allowNull: false,

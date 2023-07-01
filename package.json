@@ -20,6 +20,7 @@
     "multer-s3": "^2.10.0",
     "mysql2": "^3.4.2",
     "sequelize": "^6.32.1",
+    "sharp": "^0.32.1",
     "uuid4": "^2.0.3"
   },
   "devDependencies": {

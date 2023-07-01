@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="./detailPost.css" rel="stylesheet" />
+    <script
+    src="https://code.jquery.com/jquery-3.5.1.js"
+    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    crossorigin="anonymous"
+  ></script>
+</head>
+<body>
+    <header>
+        <div class="mytitle">
+            <h3>반려동물 이야기</h3>            
+        </div>
+    </header>
+    <main>
+        <main>
+            <div class="titleBtns">
+              <button type="button" class="printPosts" onclick="printPosts()">전체 게시글 조회</button>
+              <button type="button" style="text-align:center;" onclick="homeBack()">홈페이지 이동</button>
+            </div>
+            
+            <div class="post">
+              
+            </div>
+          </main>
+    <footer>
+      <h1 style="text-align:center;" onclick="homeBack()">🏠</h1>
+    </footer>
+    <script src="" type="module"></script>
+    <script>
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const post_id = urlParams.get("postId");
+        //전체 게시글 조회
+      function printPosts(){
+        const userInfo = JSON.parse(localStorage.getItem('response'));
+        if(!userInfo) 
+            window.location.replace(`/post/post.html`);
+        else window.location.replace(`/post/post.html?id=${userInfo.User_id}`);
+      }
+      function homeBack(){
+          const userInfo = JSON.parse(localStorage.getItem('response'));
+          if(!userInfo){
+              window.location.replace(`/`);
+          }
+          else window.location.replace(`/home/home.html?id=${userInfo.User_id}`);
+      }
+      $(document).ready(()=>{
+            postDetail();
+        })
+        
+        function postDetail(){
+        let postLikeNum = 0;
+          $.ajax({
+            type: 'GET',
+                url: `/posts/${post_id}`,
+                error: function (error) {
+                    alert(error.responseJSON.errorMessage);
+                },
+                success: function (response) {
+                  const post = response.data;
+                  let src = '';
+                  post.image_url ? src = post.image_url
+                  : src = '../image/defaultImage.jpg';
+                  $('.post').empty();
+                  const postDetailInnerHtml = `<div class="postTitle">
+                                                  <h2 style="text-align:center;">${post.title}</h2>
+                                                  </div>
+                                                  <div class="postContent">
+                                                    <!--<img src="${src}" width="500" height="500">-->
+                                                    <p style="text-align:center;">${post.content}</p>
+                                                  </div>
+                                                  <div class="likeBtn">
+                                                    <label class="like" countPostId=${post.post_id} onclick="countLike(this)">👍 ${post.Likes.length}</label>
+                                                </div>`
+                  
+                  $('.post').append(postDetailInnerHtml);
+                }
+          })
+        }
+
+        //좋아요 올리기
+        function countLike(post) {
+          const postId = post.getAttribute('countPostId');
+          $.ajax({
+            type: 'POST',
+            url: `/posts/${postId}/like`,
+            success: function (data) {
+              const message = data.message;
+              if (message) {
+                alert(data.message);
+                postDetail();
+              } else {
+                alert(data.errorMessage);
+              }
+            },
+            error: (error) => {
+              alert(error.responseJSON.errorMessage);
+            },
+          });
+        }
+    </script>
+</body>
+</html>

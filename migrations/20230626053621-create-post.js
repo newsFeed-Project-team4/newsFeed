@@ -17,6 +17,7 @@ module.exports = {
           key: 'User_id',
         },
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       title: {
         allowNull: false,
@@ -28,6 +29,9 @@ module.exports = {
       },
       Name: {
         allowNull: false,
+        type: Sequelize.STRING,
+      },
+      image_url: {
         type: Sequelize.STRING,
       },
       created_at: {

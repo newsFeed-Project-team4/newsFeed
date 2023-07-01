@@ -1,11 +1,29 @@
 const express = require('express');
-const { Post, User, UserInfo } = require('../models');
+const { Post, Like } = require('../models');
 const { Op } = require('sequelize');
+const sharp = require('sharp');
+const fs = require('fs');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 
-router.post('/posts', authMiddleware, async (req, res) => {
+router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
+  // if (req.file) {
+  //   try {
+  //     sharp(req.buffer)
+  //       .resize({ width: 600 })
+  //       .withMetadata()
+  //       .toBuffer((err, buffer) => {
+  //         if (err) throw err;
+  //         fs.writeFile(res.file.path, buffer, (err) => {
+  //           if (err) throw err;
+  //         });
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  let filepath = req.file ? req.file.location : null;
   try {
     const { User_id } = res.locals.user;
     const name = res.locals.userName;
@@ -16,17 +34,22 @@ router.post('/posts', authMiddleware, async (req, res) => {
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
+    const imageTag = filepath
+      ? `<img src="${filepath}" class="postImage" alt="./image/defaultImage.jpg" />`
+      : '';
+
     const post = await Post.create({
       User_id,
       title,
       content,
       Name: name,
+      image_url: imageTag,
     });
 
     return res.status(201).json({ message: '게시글을 생성하였습니다.' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
+    return res.status(500).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
   }
 });
 
@@ -34,8 +57,15 @@ router.post('/posts', authMiddleware, async (req, res) => {
 router.get('/posts', async (req, res) => {
   try {
     const posts = await Post.findAll({
-      attributes: ['post_id', 'User_id', 'title', 'Name', 'created_at', 'updated_at'],
+      attributes: ['post_id', 'User_id', 'title', 'Name', 'content', 'image_url', 'created_at'],
       order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: Like,
+          attributes: ['User_id', 'Post_id'],
+          groupBy: ['Post_id'],
+        },
+      ],
     });
 
     if (!posts.length) {
@@ -57,7 +87,6 @@ router.get('/posts/:post_id', async (req, res) => {
       attributes: ['post_id', 'User_id', 'title', 'Name', 'content', 'created_at', 'updated_at'],
       where: { post_id },
     });
-
     if (!post) {
       return res.status(404).json({ errorMessage: '해당 게시글을 찾을 수 없습니다.' });
     }
@@ -66,6 +95,88 @@ router.get('/posts/:post_id', async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 조회에 실패했습니다.' });
+  }
+});
+
+// 게시글 검색 기능
+router.post('/lookup', async (req, res) => {
+  try {
+    const { searchInput, category } = req.body;
+
+    if (!searchInput) {
+      return res.status(400).json({
+        errorMessage: '검색어를 입력해주세요.',
+      });
+    }
+
+    switch (category) {
+      case 'searchNone':
+        return res.status(400).json({ errorMessage: '검색 범위를 선택해주세요.' });
+      case 'searchTitle': {
+        const searchPosts = await Post.findAll({
+          attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+          where: { title: { [Op.like]: `%${searchInput}%` } },
+          order: [['created_at', 'DESC']],
+          include: [
+            {
+              model: Like,
+              attributes: ['User_id', 'Post_id'],
+              groupBy: ['Post_id'],
+            },
+          ],
+        });
+
+        return res.status(200).json({ searchPosts });
+      }
+      case 'searchContent': {
+        const searchPosts = await Post.findAll({
+          attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+          where: {
+            [Op.or]: [
+              { title: { [Op.like]: `%${searchInput}%` } },
+              { content: { [Op.like]: `%${searchInput}%` } },
+            ],
+          },
+          order: [['created_at', 'DESC']],
+          include: [
+            {
+              model: Like,
+              attributes: ['User_id', 'Post_id'],
+              groupBy: ['Post_id'],
+            },
+          ],
+        });
+
+        return res.status(200).json({ searchPosts });
+      }
+      case 'searchAll': {
+        const searchPosts = await Post.findAll({
+          attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+          where: {
+            [Op.or]: [
+              { title: { [Op.like]: `%${searchInput}%` } },
+              { content: { [Op.like]: `%${searchInput}%` } },
+              { Name: { [Op.like]: `%${searchInput}%` } },
+            ],
+          },
+          order: [['created_at', 'DESC']],
+          include: [
+            {
+              model: Like,
+              attributes: ['User_id', 'Post_id'],
+              groupBy: ['Post_id'],
+            },
+          ],
+        });
+
+        return res.status(200).json({ searchPosts });
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      errorMessage: '게시글 검색에 실패하였습니다.',
+    });
   }
 });
 
@@ -131,50 +242,14 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
     // 게시글을 삭제합니다.
     await Post.destroy({
       where: {
-        post_id,
-        User_id: User_id,
+        [Op.and]: [{ post_id }, { User_id: User_id }],
       },
     });
 
-    return res.status(200).json({ data: '게시글이 삭제되었습니다.' });
+    return res.status(200).json({ message: '게시글이 삭제되었습니다.' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 삭제에 실패했습니다.' });
-  }
-});
-
-// 게시글 검색 기능
-router.get('/posts/search', async (req, res) => {
-  try {
-    const { query, searchType } = req.query;
-    let whereCondition = {};
-
-    if (searchType === 'title') {
-      whereCondition = { title: { [Op.like]: `%${query}%` } };
-    } else if (searchType === 'content') {
-      whereCondition = { content: { [Op.like]: `%${query}%` } };
-    } else if (searchType === 'both') {
-      whereCondition = {
-        [Op.or]: [{ title: { [Op.like]: `%${query}%` } }, { content: { [Op.like]: `%${query}%` } }],
-      };
-    } else {
-      return res.status(400).json({ errorMessage: '정확히 검색해주세요.' });
-    }
-
-    const posts = await Post.findAll({
-      attributes: ['post_id', 'title', 'like', 'created_at'],
-      where: whereCondition,
-      order: [['created_at', 'DESC']],
-    });
-
-    if (!posts.length) {
-      return res.status(404).json({ errorMessage: '검색 결과가 없습니다.' });
-    }
-
-    return res.status(200).json({ posts: posts });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ errorMessage: '검색 도중에 에러가 발생했습니다.' });
   }
 });
 
@@ -186,48 +261,34 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
   try {
     const post = await Post.findByPk(post_id);
     if (!post) {
-      return res.status(404).json({ message: '게시글을 찾을 수 없습니다.' });
+      return res.status(404).json({ errorMessage: '게시글을 찾을 수 없습니다.' });
     }
 
     const existingLike = await Like.findOne({
       where: {
-        post_id,
-        User_id,
+        [Op.and]: [{ Post_id: post_id }, { User_id }],
       },
     });
 
-    await sequelize.transaction(async (t) => {
-      if (existingLike) {
-        // 이미 좋아요를 눌렀다면 좋아요 취소
-        await existingLike.destroy({ transaction: t }); // 좋아요 기록 삭제
+    if (existingLike) {
+      // 이미 좋아요를 눌렀다면 좋아요 취소
+      await existingLike.destroy(); // 좋아요 기록 삭제
+      return res.status(200).json({ message: '좋아요를 취소했습니다.' });
+    } else {
+      // 좋아요 추가
+      await Like.create({
+        Post_id: post_id,
+        User_id,
+      }); // 좋아요 기록 생성
 
-        await Post.decrement('like', {
-          where: { post_id },
-          transaction: t,
-        }); // 좋아요 수 감소
-
-        return res.status(200).json({ message: '좋아요를 취소했습니다.' });
-      } else {
-        // 좋아요 추가
-        await Like.create(
-          {
-            post_id,
-            User_id,
-          },
-          { transaction: t },
-        ); // 좋아요 기록 생성
-
-        await Post.increment('like', {
-          where: { post_id },
-          transaction: t,
-        }); // 좋아요 수 증가
-
-        return res.status(200).json({ message: '좋아요를 추가했습니다.' });
-      }
-    });
+      const postLikes = await Like.findAll({ where: { Post_id: post_id } });
+      return res
+        .status(200)
+        .json({ message: '좋아요를 추가했습니다.', postLikes: postLikes.length });
+    }
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
+    return res.status(500).json({ errorMessage: '좋아요를 처리하는 도중 에러가 발생했습니다.' });
   }
 });
 

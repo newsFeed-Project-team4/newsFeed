@@ -13,7 +13,7 @@ const s3 = new AWS.S3({
   region: env.AWS_REGION,
 });
 
-const allowedExtensions = ['.png', '.jpg', '.jpeg', '.bmp', '.gif'];
+const allowedExtensions = ['.png', '.jpg', '.jpeg', '.jfif', '.exif', '.tiff', '.bmp', '.gif'];
 
 const upload = multer({
   storage: multerS3({
