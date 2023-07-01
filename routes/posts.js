@@ -179,7 +179,7 @@ router.get('/posts/search', async (req, res) => {
 });
 
 // 좋아요 기능
-router.post('/posts/:postId/like', authMiddleware, async (req, res) => {
+router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
   const { post_id } = req.params;
   const { User_id } = res.locals.user; // 현재 로그인한 사용자의 ID
 
