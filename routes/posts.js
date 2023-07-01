@@ -86,6 +86,14 @@ router.get('/posts/:post_id', async (req, res) => {
     const post = await Post.findOne({
       attributes: ['post_id', 'User_id', 'title', 'Name', 'content', 'created_at', 'updated_at'],
       where: { post_id },
+      //상세페이지에서도 좋아요표시가 되야하기때문에 수정
+      include: [
+        {
+          model: Like,
+          attributes: ['User_id', 'Post_id'],
+          groupBy: ['Post_id'],
+        },
+      ],
     });
     if (!post) {
       return res.status(404).json({ errorMessage: '해당 게시글을 찾을 수 없습니다.' });
