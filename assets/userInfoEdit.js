@@ -52,7 +52,7 @@ async function userInfoEdit(event) {
       const objString = JSON.stringify(response.userInfo);
       localStorage.setItem('response', objString);
       alert(response.message);
-      window.location.replace(`/home.html?id=${user_id}`);
+      window.location.replace(`/home/home.html?id=${user_id}`);
     },
   });
 }

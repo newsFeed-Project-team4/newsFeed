@@ -24,10 +24,14 @@ body {
   box-sizing: border-box;
   height: 150px;
 
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url('https://movie-phinf.pstatic.net/20210715_95/1626338192428gTnJl_JPEG/movie_image.jpg');
+  background-image: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.5),
+      rgba(0, 0, 0, 0.5)
+      ),
+      url("https://i.postimg.cc/WzFLRMgm/My-Photo-1218898596-0549.jpg");
   background-position: center;
-  background-size: cover;
+  background-size: contain;
 
   color: white;
 
@@ -35,7 +39,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: -20px 0 20px 0;
+  margin: 0 0 20px 0;
 }
 
 .mytitle .titleName {
@@ -103,6 +107,8 @@ label {
 }
 
 .firstBox {
+  width: 90%;
+  height: 500px;
   display: flex;
   flex-direction: row;
   align-items: start;
@@ -111,7 +117,7 @@ label {
   background-color: antiquewhite;
 
   padding: 5px 5px 5px 0;
-  margin: 10px 10px 10px 10px;
+  margin: 10px auto 10px auto;
 }
 
 .userInfoBox {
@@ -122,49 +128,73 @@ label {
   padding: 3px 3px 3px 3px;
 }
 
-.postBox {
+.postBox{
   width: 90%;
-  height: auto;
+  height: 490px;
   margin-left: 30%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: gray;
+  align-items:center;
+  justify-content:center;
+  display: block;
 }
 .postBox > div {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+.post{
+  width: 90%;
+  height: 93px;
+  background-color: aliceblue;
+  
+  margin: 10px;
+  padding: 10px;
+  justify-self: center;
+
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0);
+
+}
+.post>div{
+  margin: 3% 3% 3% 3%;
+}
 
 .postImgBox {
-  margin-top: 10px;
-  width: 70%;
+  width: 90%;
   height: 50%;
-  background-position: center;
+  
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
 
-  margin: 2.5% auto 2.5% 2.5%;
-  padding-top: 2.5%;
+  margin: 2.5% auto 2.5% auto;
+  padding: 2.5%;
 
-  background-color: goldenrod;
+  background-color: rgb(232, 223, 199);
 }
 
 .postBottomBox {
-  margin-left: 10px;
+  padding: 10px;
+  margin-right: 2.5%;
+  margin-left: 2.5%;
+  
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  background-color: azure;
 }
 
 .imgBox {
   background-color: greenyellow;
-  width: 50px;
-  height: 50px;
+  width: 200px;
+  height: 200px;
 
   border-radius: 10px;
 
-  margin: 0% 5% 5px 5%;
+}
+.imgBox>img{
+  width: 100%;
+  height: 100%;
 }
 
 .posts {
