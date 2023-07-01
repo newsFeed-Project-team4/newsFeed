@@ -10,7 +10,6 @@ module.exports = async (req, res, next) => {
     // 토큰이 없는 경우니까 로그인 후 이용하도록 설정
     if (accessAuthType !== 'Bearer' && !accessAuthToken && !existReFreshToken) {
       res.status(403).json({
-        success: false,
         errorMessage: '로그인 후에 이용할 수 있는 기능입니다.',
       });
       return;
@@ -34,9 +33,7 @@ module.exports = async (req, res, next) => {
 
       if (!user) {
         res.clearCookie('accessToken');
-        return res
-          .status(403)
-          .json({ success: false, errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+        return res.status(403).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
       }
 
       res.locals.user = user;
@@ -51,11 +48,8 @@ module.exports = async (req, res, next) => {
 
         if (!user) {
           res.clearCookie('accessToken');
-          return res
-            .status(403)
-            .json({ success: false, errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+          return res.status(403).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
         }
-
         res.locals.user = user;
         res.locals.userName = user.name;
 
@@ -79,9 +73,7 @@ module.exports = async (req, res, next) => {
 
           if (!user) {
             res.clearCookie('accessToken');
-            res
-              .status(403)
-              .json({ success: false, errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+            res.status(403).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
           }
 
           res.locals.user = user;
@@ -99,8 +91,7 @@ module.exports = async (req, res, next) => {
         await Token.destroy({ where: { token_id: existReFreshToken.token_id } });
 
       res.status(403).json({
-        success: false,
-        message: '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.',
+        errorMessage: '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.',
       });
       return;
     } else {
@@ -108,7 +99,6 @@ module.exports = async (req, res, next) => {
       res.clearCookie('accessToken');
       Token.destroy({ where: {} });
       res.status(403).json({
-        success: false,
         errorMessage: '전달된 쿠키에서 오류가 발생하였습니다. 모든 쿠키를 삭제합니다.',
       });
       return;

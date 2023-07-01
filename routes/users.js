@@ -78,6 +78,8 @@ router.post('/login', async (req, res) => {
     });
 
     await Token.create({ token_id: refreshToken, User_id: user.user_id });
+
+    res.clearCookie('accessToken');
     res.cookie('accessToken', `Bearer ${accessToken}`);
     return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, userInfo });
   }
@@ -98,6 +100,7 @@ router.post('/login', async (req, res) => {
       expiresIn: '1h',
     });
 
+    res.clearCookie('accessToken');
     res.cookie('accessToken', `Bearer ${accessToken}`);
     return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, userInfo });
   } catch (error) {
@@ -111,6 +114,8 @@ router.post('/login', async (req, res) => {
 
       await Token.destroy({ where: { User_id: user.user_id } });
       await Token.create({ token_id: refreshToken, User_id: user.user_id });
+
+      res.clearCookie('accessToken');
       res.cookie('accessToken', `Bearer ${accessToken}`);
       return res.status(200).json({ message: `${userInfo.name}님 환영합니다.`, userInfo });
     }

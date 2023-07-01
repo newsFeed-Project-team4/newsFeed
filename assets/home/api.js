@@ -11,7 +11,7 @@ const $logoutBtn = document.querySelector('.logoutBtn');
 const $title = document.querySelector('#title');
 const $content = document.querySelector('#content');
 
-const { User } = require('../models');
+const { User } = require('../../models');
 async function userInfoEditBtn(userEmail, callback) {
   const user = await User.findOne({ where: { email: userEmail } });
   $.ajax({
@@ -54,7 +54,6 @@ $logoutBtn.addEventListener('click', () => {
     },
   });
 });
-
 
 function savePost() {
   let title = $title;

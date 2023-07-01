@@ -1,0 +1,138 @@
+* {
+  font-family: 'Jua', sans-serif;
+}
+
+.postImage {
+  width: 400px;
+  height: 300px;
+  display: block;
+  padding: 1rem;
+  border-radius: 20px;
+}
+
+.printPosts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(250px, 40fr));
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.post {
+  display: block;
+  margin: 10px;
+  padding: 10px;
+  justify-self: center;
+
+  border-radius: 10px;
+  background-color: var(--bg-card-color);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;
+
+  text-align: center;
+  transition: transform 100ms ease-in;
+}
+
+.post:hover {
+  transform: scale(1.02);
+}
+
+.postTitle {
+  float: left;
+  padding-left: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #626262;
+}
+
+.postUserName {
+  float: right;
+  font-weight: bold;
+  padding-right: 20px;
+}
+
+.post > img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.like {
+  font-weight: bold;
+  padding-top: 8px;
+}
+
+.buttons {
+  float: left;
+  padding-left: 10px;
+}
+
+.buttons > button {
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.createdAtPost {
+  float: right;
+  padding-right: 7px;
+  padding-top: 10px;
+  font-size: 12px;
+}
+
+/* 검색 영역 설정 */
+.search {
+  margin: 10px 34% 0px auto;
+  display: flex;
+
+  width: 100%;
+  max-width: 600px;
+
+  overflow: hidden;
+  height: 40px;
+
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: rgba(200, 200, 200, 0.2) 0px 5px 8px;
+}
+
+.search > input {
+  flex: 1;
+  padding: 0 16px;
+  outline: none;
+  border: none;
+}
+
+.search > button {
+  width: 60px;
+  margin: 2px;
+
+  border: none;
+  color: #ffffff;
+
+  border-radius: 8px;
+  background-color: #000000;
+  transition: transform 100ms ease-in;
+}
+
+.search > button:hover {
+  transform: scale(1.04);
+}
+
+.navigator {
+  display: block;
+  margin: 40px 50px 10px 40px;
+}
+
+.navigator > button {
+  float: right;
+  font-weight: bold;
+  margin-left: 10px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.navigator > #homeBtn {
+  float: left;
+}

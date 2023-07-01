@@ -8,9 +8,24 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate({ UserInfo, Comment, Like }) {
-      this.belongsTo(UserInfo, { targetKey: 'User_id', foreignKey: 'User_id' });
-      this.hasMany(Comment, { sourceKey: 'post_id', foreignKey: 'Post_id' });
-      this.hasMany(Like, { sourceKey: 'post_id', foreignKey: 'Post_id' });
+      this.belongsTo(UserInfo, {
+        targetKey: 'User_id',
+        foreignKey: 'User_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Comment, {
+        sourceKey: 'post_id',
+        foreignKey: 'Post_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
+      this.hasMany(Like, {
+        sourceKey: 'post_id',
+        foreignKey: 'Post_id',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      });
     }
   }
   Post.init(
@@ -35,6 +50,9 @@ module.exports = (sequelize, DataTypes) => {
       },
       Name: {
         allowNull: false,
+        type: DataTypes.STRING,
+      },
+      image_url: {
         type: DataTypes.STRING,
       },
       created_at: {

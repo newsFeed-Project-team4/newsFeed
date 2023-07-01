@@ -1,13 +1,30 @@
 const express = require('express');
 const { Post, Like } = require('../models');
 const { Op } = require('sequelize');
+const sharp = require('sharp');
+const fs = require('fs');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 
 router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
+  // if (req.file) {
+  //   try {
+  //     sharp(req.buffer)
+  //       .resize({ width: 600 })
+  //       .withMetadata()
+  //       .toBuffer((err, buffer) => {
+  //         if (err) throw err;
+  //         fs.writeFile(res.file.path, buffer, (err) => {
+  //           if (err) throw err;
+  //         });
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+  let filepath = req.file ? req.file.location : null;
   try {
-    const filepath = req.file ? req.file.location : null;
     const { User_id } = res.locals.user;
     const name = res.locals.userName;
     const { title, content } = req.body;
@@ -17,20 +34,22 @@ router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
     }
-    const imageTag = filepath ? `<img src="${filepath}" alt="게시글 이미지">` : '';
-    const updatedContent = `${content} ${imageTag}`;
+    const imageTag = filepath
+      ? `<img src="${filepath}" class="postImage" alt="./image/defaultImage.jpg" />`
+      : '';
 
     const post = await Post.create({
       User_id,
       title,
-      content: updatedContent,
+      content,
       Name: name,
+      image_url: imageTag,
     });
 
     return res.status(201).json({ message: '게시글을 생성하였습니다.' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
+    return res.status(500).json({ errorMessage: '게시글 작성에 실패하였습니다.' });
   }
 });
 
@@ -38,8 +57,15 @@ router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
 router.get('/posts', async (req, res) => {
   try {
     const posts = await Post.findAll({
-      attributes: ['post_id', 'User_id', 'title', 'Name', 'created_at', 'updated_at'],
+      attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
       order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: Like,
+          attributes: ['User_id', 'Post_id'],
+          groupBy: ['Post_id'],
+        },
+      ],
     });
 
     if (!posts.length) {
@@ -61,7 +87,6 @@ router.get('/posts/:post_id', async (req, res) => {
       attributes: ['post_id', 'User_id', 'title', 'Name', 'content', 'created_at', 'updated_at'],
       where: { post_id },
     });
-
     if (!post) {
       return res.status(404).json({ errorMessage: '해당 게시글을 찾을 수 없습니다.' });
     }
@@ -74,30 +99,82 @@ router.get('/posts/:post_id', async (req, res) => {
 });
 
 // 게시글 검색 기능
-router.get('/lookup', async (req, res) => {
+router.post('/lookup', async (req, res) => {
   try {
-    const { search } = req.query;
+    const { searchInput, category } = req.body;
 
-    if (!search) {
+    if (!searchInput) {
       return res.status(400).json({
-        message: '검색어를 입력해주세요.',
+        errorMessage: '검색어를 입력해주세요.',
       });
     }
 
-    const searchPosts = await Post.findAll({
-      attributes: ['post_id', 'Name', 'title', 'content'],
-      where: {
-        [Op.or]: [
-          { title: { [Op.like]: `%${search}%` } },
-          { content: { [Op.like]: `%${search}%` } },
-        ],
-      },
-    });
+    switch (category) {
+      case 'searchNone':
+        return res.status(400).json({ errorMessage: '검색 범위를 선택해주세요.' });
+      case 'searchTitle': {
+        const searchPosts = await Post.findAll({
+          attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+          where: { title: { [Op.like]: `%${searchInput}%` } },
+          order: [['created_at', 'DESC']],
+          include: [
+            {
+              model: Like,
+              attributes: ['User_id', 'Post_id'],
+              groupBy: ['Post_id'],
+            },
+          ],
+        });
 
-    return res.status(200).json({ searchPosts });
+        return res.status(200).json({ searchPosts });
+      }
+      case 'searchContent': {
+        const searchPosts = await Post.findAll({
+          attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+          where: {
+            [Op.or]: [
+              { title: { [Op.like]: `%${searchInput}%` } },
+              { content: { [Op.like]: `%${searchInput}%` } },
+            ],
+          },
+          order: [['created_at', 'DESC']],
+          include: [
+            {
+              model: Like,
+              attributes: ['User_id', 'Post_id'],
+              groupBy: ['Post_id'],
+            },
+          ],
+        });
+
+        return res.status(200).json({ searchPosts });
+      }
+      case 'searchAll': {
+        const searchPosts = await Post.findAll({
+          attributes: ['post_id', 'User_id', 'title', 'Name', 'image_url', 'created_at'],
+          where: {
+            [Op.or]: [
+              { title: { [Op.like]: `%${searchInput}%` } },
+              { content: { [Op.like]: `%${searchInput}%` } },
+              { Name: { [Op.like]: `%${searchInput}%` } },
+            ],
+          },
+          order: [['created_at', 'DESC']],
+          include: [
+            {
+              model: Like,
+              attributes: ['User_id', 'Post_id'],
+              groupBy: ['Post_id'],
+            },
+          ],
+        });
+
+        return res.status(200).json({ searchPosts });
+      }
+    }
   } catch (error) {
     console.log(error);
-    return res.status(400).json({
+    return res.status(500).json({
       errorMessage: '게시글 검색에 실패하였습니다.',
     });
   }
@@ -165,8 +242,7 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
     // 게시글을 삭제합니다.
     await Post.destroy({
       where: {
-        post_id,
-        User_id: User_id,
+        [Op.and]: [{ post_id }, { User_id: User_id }],
       },
     });
 
@@ -190,8 +266,7 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
 
     const existingLike = await Like.findOne({
       where: {
-        Post_id: post_id,
-        User_id,
+        [Op.and]: [{ Post_id: post_id }, { User_id }],
       },
     });
 
@@ -205,7 +280,11 @@ router.post('/posts/:post_id/like', authMiddleware, async (req, res) => {
         Post_id: post_id,
         User_id,
       }); // 좋아요 기록 생성
-      return res.status(200).json({ message: '좋아요를 추가했습니다.' });
+
+      const postLikes = await Like.findAll({ where: { Post_id: post_id } });
+      return res
+        .status(200)
+        .json({ message: '좋아요를 추가했습니다.', postLikes: postLikes.length });
     }
   } catch (error) {
     console.error(error);

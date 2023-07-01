@@ -18,6 +18,7 @@ module.exports = {
           key: 'user_id',
         },
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       name: {
         allowNull: false,

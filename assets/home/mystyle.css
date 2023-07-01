@@ -1,6 +1,16 @@
 * {
+  box-sizing: border-box;
+  margin: 100;
+  padding: 100;
   font-family: 'Gowun Dodum', sans-serif;
 }
+
+/* 전체 설정 */
+body {
+  min-height: 100vh;
+  background-color: var(--bg-header-color);
+}
+
 html,
 body {
   min-width: 100vw;
