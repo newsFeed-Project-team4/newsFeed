@@ -19,7 +19,7 @@
           <h3>반려동물 이야기</h3>
         </div>
         <div id="weather-container"></div>
-        <script src="weather.js"></script>
+        <script src="weather/weather.js"></script>
         <form class="search">
           <select id="search-options">
             <option value="searchNone">선택</option>
@@ -33,13 +33,21 @@
       </div>
     </header>
     <main>
-      <button id="toggleButton">새 가족을 찾아보세요!</button>
-      <div id="animal-container"></div>
-      <script src="animals.js"></script>
       <div class="titleBtns">
         <button type="button" class="writePage" onclick="writePage()">게시글 작성</button>
         <button type="button" class="printPosts" onclick="printPosts()">전체 게시글 조회</button>
       </div>
+      <button id="toggleButton">새 가족을 찾아보세요!</button>
+      <div id="animal-container"></div>
+      <script>
+        function openAnimalWindow() {
+          window.open('animals/animals.html', '_blank', 'width=900,height=600');
+        }
+
+        document.getElementById('toggleButton').addEventListener('click', function () {
+          openAnimalWindow();
+        });
+      </script>
       <div class="modal" id="modal2">
         <div class="form">
           <div>
@@ -136,11 +144,11 @@
         }
       }
 
-      $(document).ready(()=>{
-            getPosts();
-        })
+      $(document).ready(() => {
+        getPosts();
+      });
 
-        //로그인
+      //로그인
       async function sign_in() {
         let email = $('#inputEmail').val();
         let password = $('#inputPWD').val();
@@ -174,69 +182,71 @@
       }
 
       //게시글 get
-      function getPosts(){
-            $.ajax({
-                type: 'GET',
-                url: `/posts`,
-                error: function (error) {
-                    alert(error.responseJSON.errorMessage);
-                },
-                success: function (response) {
-                    const posts = response.posts;
-                    
-                    let arr = new Array(posts.length);
-                    for(let i = 0; i < arr.length; i++){
-                        arr[i] = new Array(2);
-                    }
+      function getPosts() {
+        $.ajax({
+          type: 'GET',
+          url: `/posts`,
+          error: function (error) {
+            alert(error.responseJSON.errorMessage);
+          },
+          success: function (response) {
+            const posts = response.posts;
 
-                    for(let i in posts){
-                        arr[i][0] = posts[i].Likes.length;
-                        arr[i][1] = posts[i];
-                    }
-                    arr.sort((a,b)=>b[0]-a[0]);
-                    //title만 뜨는? 박스
-                    $('.postBox').empty();
-                    for(let i = 0; i< 5; i++){                
-                        const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
+            let arr = new Array(posts.length);
+            for (let i = 0; i < arr.length; i++) {
+              arr[i] = new Array(2);
+            }
+
+            for (let i in posts) {
+              arr[i][0] = posts[i].Likes.length;
+              arr[i][1] = posts[i];
+            }
+            arr.sort((a, b) => b[0] - a[0]);
+            //title만 뜨는? 박스
+            $('.postBox').empty();
+            for (let i = 0; i < 5; i++) {
+              const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
                                                 <div>
                                                       <p style="text-align:left;">${arr[i][1].title}</p>
                                                     
                                                       <p style="text-align:right;">${arr[i][1].Name} ❤️${arr[i][0]}</p>
                                                   </div>
-                                            </div>`
-                        $('.postBox').append(postInnerHtml);
-                    }
-                    //밑 사진만 뜨는? 박스
-                    let imageArr = new Array(posts.length);
-                    for(let i = 0; i < arr.length; i++){
-                        imageArr[i] = new Array(2);
-                    }
-                    for(let i in posts){
-                        if(!posts[i].content){
-                            imageArr[i][0] = posts[i].Likes.length;
-                            imageArr[i][1] = posts[i];
-                        }
-                    }
-                    imageArr.sort((a,b)=>b[0]-a[0]);
-                    console.log(imageArr);
-                    $('.postImgBox').empty();
-                    for(let i = 0; i< 5; i++){
-                      let img = '';
-                      imageArr[i][1].image_url ? img = imageArr[i][1].image_url : img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />';
-                      
-                      const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${imageArr[i][1].post_id})">
+                                            </div>`;
+              $('.postBox').append(postInnerHtml);
+            }
+            //밑 사진만 뜨는? 박스
+            let imageArr = new Array(posts.length);
+            for (let i = 0; i < arr.length; i++) {
+              imageArr[i] = new Array(2);
+            }
+            for (let i in posts) {
+              if (!posts[i].content) {
+                imageArr[i][0] = posts[i].Likes.length;
+                imageArr[i][1] = posts[i];
+              }
+            }
+            imageArr.sort((a, b) => b[0] - a[0]);
+            console.log(imageArr);
+            $('.postImgBox').empty();
+            for (let i = 0; i < 5; i++) {
+              let img = '';
+              imageArr[i][1].image_url
+                ? (img = imageArr[i][1].image_url)
+                : (img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />');
+
+              const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${imageArr[i][1].post_id})">
                                               <div class="imgBox">${img}</div>
                                               <p style="text-align:center;">❤️${imageArr[i][0]}</p>
-                                            </div>`
-                      $('.postImgBox').append(postInnerHtml);
-                    }
-                },
-            });
-        }
-        //게시글 상세 조회페이지 이동
-        function postDetail(post_id){              
-            window.location.href =`/detailPost/detailPost.html?postId=${post_id}`;
-        }
+                                            </div>`;
+              $('.postImgBox').append(postInnerHtml);
+            }
+          },
+        });
+      }
+      //게시글 상세 조회페이지 이동
+      function postDetail(post_id) {
+        window.location.href = `/detailPost/detailPost.html?postId=${post_id}`;
+      }
     </script>
   </body>
 </html>
