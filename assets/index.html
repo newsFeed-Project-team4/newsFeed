@@ -5,11 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link href="./home/mystyle.css" rel="stylesheet" />
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.js"
-      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
-      crossorigin="anonymous"
-    ></script>
+    
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"
+  ></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap');
+  </style>
     <script src="./home/api.js" defer></script>
   </head>
   <body>
@@ -33,9 +44,15 @@
       </div>
     </header>
     <main>
-      <div class="titleBtns">
-        <button type="button" class="writePage" onclick="writePage()">게시글 작성</button>
-        <button type="button" class="printPosts" onclick="printPosts()">전체 게시글 조회</button>
+
+      <div class="navigator">
+        <button type="button"
+        class="writePage btn btn-outline-dark"
+        onclick="writePage()">게시글 작성</button>
+        <button type="button"
+        class="printPosts btn btn-outline-dark"
+        onclick="printPosts()">전체 게시글</button>
+
       </div>
       <button id="toggleButton">새 가족을 찾아보세요!</button>
       <div id="animal-container"></div>
@@ -77,26 +94,29 @@
                   <input type="file" id="newFile" name="newFile" />
                 </div>
               </div>
-              <button class="modal-btn" id="signUpSubmit">회원가입</button>
+              <button class="modal-btn btn btn-outline-primary" id="signUpSubmit">회원가입</button>
             </form>
           </div>
           <div>
-            <button class="modal-btn" id="close2" onclick="close2()">닫기</button>
+            <button class="modal-btn btn btn-outline-danger" id="close2" onclick="close2()">닫기</button>
           </div>
         </div>
       </div>
       <div class="firstBox">
         <div class="userInfoBox">
           <div class="loginForm" id="loginForm">
-            <label>이메일:</label>
-            <input id="inputEmail" /><br />
-            <label>PWD:</label>
-            <input id="inputPWD" type="password" />
-            <div>
-              <button class="submit" onclick="sign_in()">로그인</button>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">email</span>
+              <input id="inputEmail" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group mb-3">
+              <span class="input-group-text" id="basic-addon1">password</span>
+              <input id="inputPWD" type="password" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
             </div>
             <div>
-              <button class="signUpModal" onclick="signUpModal()">회원가입</button>
+              <button class="submit btn btn-outline-primary" onclick="sign_in()">로그인</button>
+  
+              <button class="signUpModal btn btn-outline-info" onclick="signUpModal()">회원가입</button>
             </div>
           </div>
         </div>
@@ -130,7 +150,11 @@
         </div>
       </div>
     </main>
-    <footer></footer>
+    <footer>
+      <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
+        <div id="animal-container"></div>
+        <script src="./animals.js"></script>
+    </footer>
     <script>
       //모달 창 열기
       function signUpModal() {
@@ -207,46 +231,35 @@
             for (let i = 0; i < 5; i++) {
               const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
                                                 <div>
-                                                      <p style="text-align:left;">${arr[i][1].title}</p>
-                                                    
-                                                      <p style="text-align:right;">${arr[i][1].Name} ❤️${arr[i][0]}</p>
+                                                      <h3 id="postTitle">${arr[i][1].title}</h3>                                                    
+                                                      <p id="postLike">${arr[i][1].Name} 👍${arr[i][0]}</p>
                                                   </div>
-                                            </div>`;
-              $('.postBox').append(postInnerHtml);
-            }
-            //밑 사진만 뜨는? 박스
-            let imageArr = new Array(posts.length);
-            for (let i = 0; i < arr.length; i++) {
-              imageArr[i] = new Array(2);
-            }
-            for (let i in posts) {
-              if (!posts[i].content) {
-                imageArr[i][0] = posts[i].Likes.length;
-                imageArr[i][1] = posts[i];
-              }
-            }
-            imageArr.sort((a, b) => b[0] - a[0]);
-            console.log(imageArr);
-            $('.postImgBox').empty();
-            for (let i = 0; i < 5; i++) {
-              let img = '';
-              imageArr[i][1].image_url
-                ? (img = imageArr[i][1].image_url)
-                : (img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />');
-
-              const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${imageArr[i][1].post_id})">
+                                      </div>`
+                        $('.postBox').append(postInnerHtml);
+                    }
+                    //밑 사진만 뜨는 박스
+                    //최신순                    
+                    $('.postImgBox').empty();
+                    for(let i = 0; i< 5; i++){
+                      let img = '';
+                      posts[i].image_url ? img = posts[i].image_url : img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />';
+                      let date = '작성일자: ' + posts[i].created_at.substring(0, 10).replace('-', '.').replace('-', '.');
+                      const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${posts[i].post_id})">
                                               <div class="imgBox">${img}</div>
-                                              <p style="text-align:center;">❤️${imageArr[i][0]}</p>
-                                            </div>`;
-              $('.postImgBox').append(postInnerHtml);
-            }
-          },
-        });
-      }
-      //게시글 상세 조회페이지 이동
-      function postDetail(post_id) {
-        window.location.href = `/detailPost/detailPost.html?postId=${post_id}`;
-      }
+                                              <p style="text-align:center;">${posts[i].title}</p>
+                                              <p style="text-align:center;">👍${posts[i].Likes.length}</p>
+                                              <p style="text-align:center;">${date}</p>
+                                            </div>`
+                      $('.postImgBox').append(postInnerHtml);
+                    }
+                },
+            });
+        }
+        //게시글 상세 조회페이지 이동
+        function postDetail(post_id){              
+            window.location.href =`/detailPost/detailPost.html?postId=${post_id}`;
+        }
+
     </script>
   </body>
 </html>

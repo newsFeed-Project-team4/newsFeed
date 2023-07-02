@@ -2,7 +2,7 @@
   box-sizing: border-box;
   margin: 100;
   padding: 100;
-  font-family: 'Gowun Dodum', sans-serif;
+  font-family: 'Jua', sans-serif;
 }
 
 /* 전체 설정 */
@@ -45,17 +45,6 @@ body {
   margin: 10px 0 0 0;
 }
 
-.titleBtns {
-  display: flex;
-  flex-direction: row;
-  align-items: end;
-  justify-content: end;
-}
-
-.titleBtns > button {
-  margin-right: 10px;
-}
-
 .modal {
   width: 100%;
   height: 80%;
@@ -65,6 +54,7 @@ body {
   padding: 30px;
   display: none;
   align-items: center;
+  
 }
 .show-modal {
   display: block;
@@ -79,6 +69,10 @@ body {
   margin: auto;
 }
 .form > button {
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
   margin-top: 5px;
 }
 .form div {
@@ -87,12 +81,14 @@ body {
   flex-direction: column;
 }
 .modal-btn {
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
   margin-top: 5px;
+  
 }
 
-label {
-  display: inline;
-}
 .modal-input {
   width: 150px;
   font-size: 20px;
@@ -110,21 +106,44 @@ label {
   align-items: start;
   justify-content: start;
 
-  background-color: antiquewhite;
+  /* background-color: antiquewhite; */
 
   padding: 5px 5px 5px 0;
   margin: 10px auto 10px auto;
 }
 
-.userInfoBox {
-  margin-left: 3%;
-  background-color: aliceblue;
-
+.userInfoBox {  
+  display: block;
+  width: 25%;
   padding: 8px;
+
+  border-radius: 10px;
+  background-color: var(--bg-card-color);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;
+
+  font-weight: bold;
+  border-width: 2px;
+  transition: transform 100ms ease-in;
+  position: absolute;
+}
+.loginForm>button{
+  margin-top: 3%;
+}
+.loginBox{
+  justify-self: center;
+  
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: transform 100ms ease-in;
+  
 }
 
-.postBox {
-  width: 90%;
+
+.postBox{
+  width: 70%;
+
   height: 490px;
   margin-left: 30%;
   display: flex;
@@ -132,25 +151,40 @@ label {
   align-items: center;
   justify-content: center;
   display: block;
+  
+
+  position: absolute;
 }
 .postBox > div {
   margin-top: 5px;
   margin-bottom: 5px;
 }
-.post {
-  width: 90%;
-  height: 93px;
-  background-color: aliceblue;
 
+.post{
+  display: block;
+  width: 90%;
+  height: 100px;
   margin: 10px;
   padding: 10px;
   justify-self: center;
-
+  
   border-radius: 10px;
+  background-color: var(--bg-card-color);
   border: 1px solid rgb(0, 0, 0);
+
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;
+
+  font-weight: bold;
+  border-width: 2px;
+  transition: transform 100ms ease-in;
+
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
-.post > div {
-  margin: 3% 3% 3% 3%;
+#postLike{
+  margin-right: 10%;
+  text-align: right;
 }
 
 .postImgBox {
@@ -162,20 +196,31 @@ label {
   align-items: center;
   justify-content: center;
 
+  display: grid;
+  grid-template-columns: repeat(5, minmax(100px, 40fr));
   margin: 2.5% auto 2.5% auto;
   padding: 2.5%;
 
-  background-color: rgb(232, 223, 199);
+  /* background-color: rgb(232, 223, 199); */
 }
 
-.postBottomBox {
+.postBottomBox {  
+  display: block;
   padding: 10px;
-  margin-right: 2.5%;
-  margin-left: 2.5%;
-
+  margin: 2.5%;
+  
   border-radius: 10px;
+  background-color: var(--bg-card-color);
   border: 1px solid rgb(0, 0, 0);
-  background-color: azure;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;
+
+  display: grid;
+  align-items: center;
+  justify-content: center;
+
+  font-weight: bold;
+  border-width: 2px;
+  transition: transform 100ms ease-in;
 }
 
 .imgBox {
@@ -190,48 +235,71 @@ label {
   height: 100%;
 }
 
-.posts {
-  width: 90%;
-  height: 90%;
+/* 검색 영역 설정 */
+.search {
+  margin: 10px 34% 0px auto;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 
-  margin: 3% auto auto auto;
+  width: 100%;
+  max-width: 600px;
 
-  color: aliceblue;
-  background-color: rgb(24, 34, 71);
-}
+  overflow: hidden;
+  height: 40px;
 
-.postsBox {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  background-color: green;
-  margin-top: 50px;
-}
-
-.posts {
-  background-color: #f9ffff;
-  box-shadow: 0px 0px 8px gray;
-  width: 400px;
-  height: 500px;
+  background-color: #ffffff;
   border-radius: 10px;
-  margin: 20px;
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: rgba(200, 200, 200, 0.2) 0px 5px 8px;
 }
 
-.posts:hover {
-  cursor: pointer;
+.search > input {
+  flex: 1;
+  padding: 0 16px;
+  outline: none;
+  border: none;
 }
 
-.posts > img {
-  width: 360px;
-  height: 390px;
-  border-radius: 30px;
-  padding: 20px 20px 20px 20px;
+.search > button {
+  width: 60px;
+  margin: 2px;
+
+  border: none;
+  color: #ffffff;
+
+  border-radius: 8px;
+  background-color: #000000;
+  transition: transform 100ms ease-in;
+}
+
+.search > button:hover {
+  transform: scale(1.04);
+}
+
+.navigator {
+  display: block;
+  margin: 40px 50px 10px 40px;
+}
+  
+.navigator > button {
+  float: right;
+  font-weight: bold;
+  margin-left: 10px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.navigator > #homeBtn {
+  float: left;
 }
 
 #toggleButton {
   margin-bottom: 20px;
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  margin: 0 auto 10px 44.5%;
+
+  text-align: center;
 }

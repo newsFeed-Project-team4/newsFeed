@@ -18,20 +18,46 @@
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="./post.js" defer></script>
     <script>
-      function home() {
-        window.location.href = '../home/home.html';
+      const userInfo = JSON.parse(localStorage.getItem('response'));
+      function home() {        
+        if(!userInfo){
+            window.location.href='/';
+        }
+        else window.location.href=`/home/home.html?id=${userInfo.User_id}`;
       }
       function writePost() {
-        window.location.href = '../writePost/writePost.html';
+        if(!userInfo){
+          alert('로그인 후 이용 가능합니다.');
+        }
+        else window.location.href = `/writePost/writePost.html?id=${userInfo.User_id}`;
       }
     </script>
     <link href="./post.css" rel="stylesheet" />
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap');
     </style>
   </head>
   <body>
-    <header></header>
+    <header>
+      <div class="mytitle">
+        <div class="titleName">
+          <h3>반려동물 이야기</h3>
+        </div>
+        <div id="weather-container"></div>
+        <script src="../weather.js"></script>
+        <form class="search">
+          <select id="search-options">
+            <option value="searchNone">선택</option>
+            <option value="searchTitle">제목</option>
+            <option value="searchContent">제목&내용</option>
+            <option value="searchAll">통합검색</option>
+          </select>
+          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
+          <button id="search-btn">검색</button>
+        </form>
+      </div>
+    </header>
+    
     <div class="navigator">
       <button type="button" id="postBtn" class="btn btn-outline-dark" onclick="writePost()">
         게시글 작성
@@ -39,17 +65,12 @@
       <button type="button" id="picturePostBtn" class="btn btn-outline-dark">사진 게시판</button>
       <button type="button" id="homeBtn" class="btn btn-outline-dark" onclick="home()">Home</button>
     </div>
-    <form class="search">
-      <select id="search-options">
-        <option value="searchNone">선택</option>
-        <option value="searchTitle">제목</option>
-        <option value="searchContent">제목&내용</option>
-        <option value="searchAll">통합검색</option>
-      </select>
-      <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
-      <button id="search-btn">검색</button>
-    </form>
 
     <section class="printPosts"></section>
+    <footer>
+      <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
+        <div id="animal-container"></div>
+        <script src="./animals.js"></script>
+    </footer>
   </body>
 </html>
