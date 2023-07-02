@@ -4,14 +4,23 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="/mystyle.css" rel="stylesheet" />
+    <link href="./mystyle.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
     <script
-      src="https://code.jquery.com/jquery-3.5.1.js"
-      integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap');
+    </style>
     <script src="./userInfoEdit.js" defer></script>
-    <script src="animals.js"></script>
   </head>
   <body>
     <header>
@@ -19,10 +28,18 @@
         <div class="titleName">
           <h3>반려동물 이야기</h3>
         </div>
-        <div class="search">
-          <input id="searchBox" />
-          <button id="searchBtn">검색</button>
-        </div>
+        <div id="weather-container"></div>
+        <script src="../weather/weather.js"></script>
+        <form class="search">
+          <select id="search-options">
+            <option value="searchNone">선택</option>
+            <option value="searchTitle">제목</option>
+            <option value="searchContent">제목&내용</option>
+            <option value="searchAll">통합검색</option>
+          </select>
+          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
+          <button id="search-btn">검색</button>
+        </form>
       </div>
     </header>
     <main>
@@ -34,18 +51,6 @@
           전체 게시글
         </button>
       </div>
-      <button id="toggleButton">새 가족을 찾아보세요!</button>
-      <div id="animal-container"></div>
-      <script>
-        function openAnimalWindow() {
-          window.open('../animals/animals.html', '_blank', 'width=900,height=600');
-        }
-
-        document.getElementById('toggleButton').addEventListener('click', function () {
-          openAnimalWindow();
-        });
-      </script>
-
       <div class="modal" id="modal">
         <div class="form">
           <div>
@@ -87,53 +92,70 @@
             </button>
           </div>
         </div>
-      </div>
-      <div class="firstBox">
-        <div class="userInfoBox">
-          <div class="loginBox" id="loginBox">
-            <div>
-              <div class="imageBox">
-                <img id="profile_image" width="150" height="150" />
+        </div>
+        <div class="firstBox">
+          <div class="userInfoBox">
+            <div class="loginBox" id="loginBox">
+              <div>
+                <div class="imageBox">
+                  <img id="profile_image" width="150" height="150" />
+                </div>
+                <div class="userInfo">
+                  <p id="userInfoName"></p>
+                  <p id="userInfoPetName"></p>
+                </div>
+                <div class="userOneLineComment">
+                  <p id="userOneLine"></p>
+                </div>
               </div>
-              <div class="userInfo">
-                <p id="userInfoName"></p>
-                <p id="userInfoPetName"></p>
+              <div class="btnBox">
+                <button class="userInfoBtn btn btn-outline-info" onclick="userInfoBtn()">
+                  정보 수정
+                </button>
+                <button class="logoutBtn btn btn-outline-danger" onclick="logoutBtn()">
+                  로그아웃
+                </button>
               </div>
-              <div class="userOneLineComment">
-                <p id="userOneLine"></p>
-              </div>
-            </div>
-            <div class="btnBox">
-              <button class="userInfoBtn btn btn-outline-info" onclick="userInfoBtn()">
-                정보 수정
-              </button>
-              <button class="logoutBtn btn btn-outline-danger" onclick="logoutBtn()">
-                로그아웃
-              </button>
             </div>
           </div>
+          <div class="postBox">
+            <div class="post"></div>
+          </div>
         </div>
-
-        <div class="postBox"></div>
+        <div class="postImgBox">
+          <div class="postBottomBox">
+            <div class="imgBox"></div>
+          </div>
+        </div>
       </div>
-      <div class="postImgBox"></div>
     </main>
-    <footer></footer>
+    <footer>
+      <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
+      <div id="animal-container"></div>
+    </footer>
     <script>
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
       const user_id = urlParams.get('id');
       const user_info = JSON.parse(localStorage.getItem('response'));
-
       //value에 값넣기
       $('input[id=name]').attr('value', user_info.name);
       $('input[id=petName]').attr('value', user_info.pet_name);
       $('input[id=onLiner]').attr('value', user_info.one_line_introduction);
       $('input[id=newFile]').attr('value', user_info.image_url);
-
-      document.getElementById('userInfoName').innerHTML = user_info.name;
-      document.getElementById('profile_image').src = user_info.image_url;
-
+      document.getElementById('userInfoName').innerHTML = '이름: ' + user_info.name;
+      document.getElementById('userInfoPetName').innerHTML = '반려동물 명: ' + user_info.pet_name;
+      document.getElementById('userOneLine').innerHTML =
+        '한마디: ' + user_info.one_line_introduction;
+      if (!user_info.image_url) document.getElementById('profile_image').src = '../image/cat.jpg';
+      else document.getElementById('profile_image').src = user_info.image_url;
+      $(document).ready(() => {
+        getPosts();
+        if ($('#afterPwd1').css('display') != 'none') {
+          $('#afterPwd1').hide();
+          $('#confirmPwd1').hide();
+        }
+      });
       //모달 창 열기
       function userInfoBtn() {
         if ($('#modal').css('display') == 'none') {
@@ -154,7 +176,6 @@
           $('#confirmPwd1').hide();
         }
       }
-
       //로그아웃
       function logoutBtn() {
         $.ajax({
@@ -170,18 +191,74 @@
           },
         });
       }
-
       //게시글 작성
       function postWrite() {
         window.location.replace(`/writePost/writePost.html?id=${user_info.User_id}`);
       }
-
       //전체 게시글 조회
       function printPosts() {
         const userInfo = JSON.parse(localStorage.getItem('response'));
-        if (!userInfo) window.location.replace(`/postView.html`);
-        else window.location.replace(`/postView.html?id=${userInfo.User_id}`);
+        if (!userInfo) window.location.replace(`/post/post.html`);
+        else window.location.replace(`/post/post.html?id=${userInfo.User_id}`);
       }
+      //게시글 get
+      function getPosts() {
+        $.ajax({
+          type: 'GET',
+          url: `/posts`,
+          error: function (error) {
+            alert(error.responseJSON.errorMessage);
+          },
+          success: function (response) {
+            const posts = response.posts;
+            let arr = new Array(posts.length);
+            for (let i = 0; i < arr.length; i++) {
+              arr[i] = new Array(2);
+            }
+            for (let i in posts) {
+              arr[i][0] = posts[i].Likes.length;
+              arr[i][1] = posts[i];
+            }
+            arr.sort((a, b) => b[0] - a[0]);
+            console.log(arr);
+            //title만 뜨는? 박스
+            $('.postBox').empty();
+            for (let i = 0; i < 5; i++) {
+              const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
+                                                <div>
+                                                      <h3 id="postTitle">${arr[i][1].title}</h3>
+                                                      <p id="postLike">${arr[i][1].Name} 👍 ${arr[i][0]}</p>
+                                                  </div>
+                                            </div>`;
+              $('.postBox').append(postInnerHtml);
+            }
+            //밑 사진만 뜨는 박스
+            //최신순
+            $('.postImgBox').empty();
+            for (let i = 0; i < 5; i++) {
+              let img = '';
+              posts[i].image_url
+                ? (img = posts[i].image_url)
+                : (img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />');
+              let date =
+                '작성일자: ' +
+                posts[i].created_at.substring(0, 10).replace('-', '.').replace('-', '.');
+              const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${posts[i].post_id})">
+                                              <div class="imgBox">${img}</div>
+                                              <p style="text-align:center;">${posts[i].title}</p>
+                                              <p style="text-align:center;">👍 ${posts[i].Likes.length}</p>
+                                              <p style="text-align:center;">${date}</p>
+                                            </div>`;
+              $('.postImgBox').append(postInnerHtml);
+            }
+          },
+        });
+      }
+      //게시글 상세 조회페이지 이동
+      function postDetail(post_id) {
+        window.location.href = `/detailPost/detailPost.html?postId=${post_id}`;
+      }
+      //검색
     </script>
   </body>
 </html>

@@ -1,20 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {});
-
 //회원가입 form
 const signUpSubmitBtn = document.querySelector('.signUpForm');
-
 async function signUp(event) {
   event.preventDefault();
-
   const form = new FormData();
-
   const email = document.querySelector('#signUpEmail').value;
   const name = document.querySelector('#signUpName').value;
   const password = document.querySelector('#signUpPwd').value;
   const confirmPassword = document.querySelector('#signUpConfirmPwd').value;
   const pet_name = document.querySelector('#signUpPetName').value;
   const newFile = document.querySelector('#newFile').files[0];
-
   if (newFile) {
     const extension = newFile.name.split('.');
     //만약 이름이 ... 일경우를 제일 뒷값이 파일값
@@ -23,7 +18,6 @@ async function signUp(event) {
       index = i;
     }
     const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
-
     if (!allowedExtensions.includes(extension[index]) || !newFile.type.startsWith('image/')) {
       alert('이미지 파일만 업로드 가능합니다.');
       return;
@@ -35,7 +29,6 @@ async function signUp(event) {
   form.append('password', password);
   form.append('confirmPassword', confirmPassword);
   form.append('pet_name', pet_name);
-
   $.ajax({
     type: 'POST',
     url: `/signup`,
@@ -51,10 +44,7 @@ async function signUp(event) {
     },
   });
 }
-
 signUpSubmitBtn.addEventListener('submit', signUp);
-
-userInfoEditBtn.addEventListener('submit', userInfoEdit);
 
 const searchPosts = document.querySelector('.search');
 //검색
@@ -89,7 +79,7 @@ function searchPost(event) {
         const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${post.post_id})">
                                 <div class="imgBox">${img}</div>
                                 <p style="text-align:center;">${post.title}</p>
-                                <p style="text-align:center;">👍${likes}</p>
+                                <p style="text-align:center;">👍:${likes}</p>
                                 <p style="text-align:center;">${date}</p>
                               </div>`;
         $('.postImgBox').append(postInnerHtml);
@@ -100,5 +90,4 @@ function searchPost(event) {
     },
   });
 }
-
 searchPosts.addEventListener('submit', searchPost);

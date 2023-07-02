@@ -61,7 +61,6 @@
 .post:hover {
   transform: scale(1.02);
   cursor: pointer;
-  cursor: pointer;
 }
 
 .postTitle {
@@ -86,10 +85,6 @@
 .like {
   font-weight: bold;
   padding-top: 8px;
-}
-
-.like:hover {
-  cursor: pointer;
 }
 
 .like:hover {
@@ -157,7 +152,6 @@
 
 .navigator {
   display: block;
-  position: relative;
   margin: 40px 50px 10px 40px;
 }
 
@@ -170,54 +164,6 @@
   border-width: 2px;
 }
 
-.navigator > div {
-  position: absolute;
-  width: 450px;
-  right: 70px;
-  top: 50px;
-  background-color: whitesmoke;
-  font-weight: bold;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-}
-
 .navigator > #homeBtn {
   float: left;
-}
-
-.userName {
-  padding-left: 20px;
-  padding-bottom: 5px;
-  margin-top: 7.5px;
-  margin-bottom: 7.5px;
-  font-size: 16px;
-}
-
-#switchBtn {
-  float: right;
-  font-weight: bold;
-  margin-top: 7.5px;
-  margin-bottom: 7.5px;
-  margin-right: 10px;
-  width: 80px;
-  height: 27px;
-  font-size: 12px;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
-}
-
-#logoutBtn {
-  float: right;
-  font-weight: bold;
-  margin-top: 7.5px;
-  margin-bottom: 7.5px;
-  margin-right: 10px;
-  width: 80px;
-  height: 25px;
-  font-size: 12px;
-  border-radius: 10px;
-  border-style: solid;
-  border-width: 2px;
 }
