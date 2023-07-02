@@ -29,9 +29,10 @@
         <div class="mytitle">
             <div class="titleName">
                 <h3>반려동물 이야기</h3>
-            </div> 
+
+            </div>  
             <div id="weather-container"></div>
-            <script src="../weather.js"></script> 
+            <script src="../weather/weather.js"></script>
             <form class="search">
                 <select id="search-options">
                   <option value="searchNone">선택</option>
@@ -50,9 +51,22 @@
             class="writePage btn btn-outline-dark"
             onclick="postWrite()">게시글 작성</button>
             <button type="button"
+
             class="printPosts btn btn-outline-dark"
             onclick="printPosts()">전체 게시글</button>
-          </div>
+        </div>
+        <button id="toggleButton">새 가족을 찾아보세요!</button>
+        <div id="animal-container"></div>
+        <script>
+            function openAnimalWindow() {
+            window.open('../animals/animals.html', '_blank', 'width=900,height=600');
+            }
+
+            document.getElementById('toggleButton').addEventListener('click', function () {
+            openAnimalWindow();
+            });
+        </script>
+
         <div class="modal" id="modal">
             <div class="form">
               <div>
