@@ -7,7 +7,7 @@ const router = express.Router();
 //댓글 작성 API
 router.post('/posts/:post_id/comments', authMiddleware, async (req, res) => {
   const { post_id } = req.params;
-  const { comment } = req.body;
+  const { comments } = req.body;
   const { User_id } = res.locals.user;
   try {
     const post = await Post.findOne({ where: { post_id } });
@@ -22,7 +22,7 @@ router.post('/posts/:post_id/comments', authMiddleware, async (req, res) => {
 
     if (!post) {
       return res.status(404).json({ errorMessage: '게시글이 없습니다.' });
-    } else if (!comment) {
+    } else if (!comments) {
       return res.status(400).json({ errorMessage: '댓글 정보가 입력되지 않았습니다.' });
     }
 
@@ -30,10 +30,11 @@ router.post('/posts/:post_id/comments', authMiddleware, async (req, res) => {
       Post_id: post_id,
       User_id,
       name: user.name,
-      comment,
+      comment: comments,
     });
     res.status(201).json({ message: '댓글을 생성하였습니다.' });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ errorMessage: '댓글 작성에 실패했습니다.' });
   }
 });
@@ -49,12 +50,12 @@ router.get('/posts/:post_id/comments', async (req, res) => {
       return res.status(404).json({ errorMessage: '게시글이 없습니다.' });
     }
     const comments = await Comment.findAll({
-      attributes: ['Post_id', 'User_id', 'name', 'comment', 'created_at', 'updated_at'],
+      attributes: ['comment_id', 'User_id', 'Post_id', 'name', 'comment', 'created_at'],
       order: [['created_at', 'DESC']],
       where: { Post_id: post_id },
     });
 
-    res.status(200).json({ comments: comments });
+    res.status(200).json({ comments });
   } catch (error) {
     return res.status(500).json({ errorMessage: '댓글 조회에 실패했습니다.' });
   }

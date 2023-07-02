@@ -5,6 +5,7 @@ module.exports = async (req, res, next) => {
   const existReFreshToken = await Token.findOne({ order: [['created_at', 'DESC']] });
   const { accessToken } = req.cookies;
   const [accessAuthType, accessAuthToken] = (accessToken ?? '').split(' ');
+
   try {
     // case 1) accessToken과 refreshToken이 둘다 없을때
     // 토큰이 없는 경우니까 로그인 후 이용하도록 설정
@@ -14,12 +15,12 @@ module.exports = async (req, res, next) => {
       });
       return;
     }
-
+    console.log('여기 상황아님?');
     // case 2) refreshToken들만 있을 때(accessToken만료가 아닌 쿠키 삭제로 인해 없는 경우)
     // refreshToken을 검증 해서 검증이 되면 새 accessToken을 발급해서 쿠키에 저장
-    if (existReFreshToken.token_id.length !== 0 && !accessAuthType && !accessAuthToken) {
+    if (existReFreshToken && !accessAuthType && !accessAuthToken) {
+      console.log('여기 상황아님?');
       jwt.verify(existReFreshToken.token_id, process.env.JWT_SECRET_KEY);
-
       const accessToken = jwt.sign(
         { User_id: existReFreshToken.User_id },
         process.env.JWT_SECRET_KEY,
@@ -95,6 +96,7 @@ module.exports = async (req, res, next) => {
       });
       return;
     } else {
+      console.log(error);
       // 그 밖의 알수 없는 오류가 발생했을 때는 전부 삭제가 되도록 함
       res.clearCookie('accessToken');
       Token.destroy({ where: {} });

@@ -124,28 +124,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-//현재 로그인 중인 유저의 정보 조회 API
-router.get('/login', authMiddleware, async (req, res) => {
-  try {
-    const loginLists = await Token.findAll({
-      attributes: ['User_id'],
-      order: [['created_at', 'DESC']],
-    });
-    const loginUserIds = loginLists.map((User) => {
-      return User.User_id;
-    });
-    const UserInfos = await UserInfo.findAll({
-      attributes: ['User_id', 'name'],
-      where: { User_id: [...loginUserIds] },
-    });
-
-    return res.status(200).json({ message: UserInfos });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ errorMessage: '로그인한 유저 정보 조회에 실패하였습니다.' });
-  }
-});
-
 //회원 정보 수정 API
 //유저의 id를 받아서 해당 유저의 정보를 수정하게끔 (비밀번호를 입력받아서 일치하면)
 router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res) => {
@@ -270,10 +248,46 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
   }
 });
 
+//권한 확인 API
+router.get('/accessRight/:user_id', authMiddleware, async (req, res) => {
+  try {
+    const currentUser = res.locals.user;
+    const { user_id } = req.params;
+
+    if (currentUser.User_id === user_id / 1)
+      return res.status(200).json({ message: 'Authorization success' });
+    else return res.status(400).json({ errorMessage: 'Authorization failed' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ errorMessage: '권한 확인에 실패하였습니다.' });
+  }
+});
+
+//접속한 사용자 계정 정보 불러오기
+router.get('/loginUsersInfo', authMiddleware, async (req, res) => {
+  try {
+    const users = await Token.findAll({
+      attributes: ['User_id'],
+      order: [['created_at', 'DESC']],
+      include: [
+        {
+          model: User,
+          attributes: ['email'],
+        },
+      ],
+    });
+
+    return res.status(200).json({ users });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ errorMessage: '계정 정보 불러오기에 실패하였습니다.' });
+  }
+});
+
 // 사용자 계정 전환 API
 router.post('/switchId/:user_id', authMiddleware, async (req, res) => {
   //쿼리는 프론트에서 input창을 받아서 서버로 쏴주는 비밀번호(이 비밀번호가 현재 계정을 인증)
-  const { password } = req.query;
+  const { password } = req.body;
   const { user_id } = req.params;
 
   try {
@@ -288,14 +302,13 @@ router.post('/switchId/:user_id', authMiddleware, async (req, res) => {
       return res.status(400).json({
         errorMessage: `비밀번호가 입력이 되지 않았습니다.`,
       });
+    const existUserInfo = await UserInfo.findOne({ where: { User_id: existUser.user_id } });
 
     const existChangePermission = await bcrypt.compare(password, existUser.password);
     if (!existChangePermission)
       return res.status(400).json({
-        errorMessage: `전환하려는 계정의 비밀번호와 일치하지 않아 계정 전환을 할 수 없습니다.`,
+        errorMessage: `${existUserInfo.name}님의 비밀번호와 일치하지 않아 계정 전환을 할 수 없습니다.`,
       });
-
-    const existUserInfo = await UserInfo.findOne({ where: { User_id: existUser.user_id } });
 
     // 해당 유저의 refreshToken을 가져와 검증함
     // 검증에 성공하면 해당 유저를 로그인 상태로 바꾸고 refreshToken을 삭제하고 재생성해서 제일 상단에 위치하게 함
@@ -305,6 +318,7 @@ router.post('/switchId/:user_id', authMiddleware, async (req, res) => {
     await Token.destroy({ where: { User_id: existUser.user_id } });
     await Token.create({ token_id: existReFreshToken.token_id, User_id: existUser.user_id });
 
+    res.clearCookie('accessToken');
     const accessToken = jwt.sign({ User_id: existUser.user_id }, process.env.JWT_SECRET_KEY, {
       expiresIn: '1h',
     });
@@ -313,6 +327,7 @@ router.post('/switchId/:user_id', authMiddleware, async (req, res) => {
   } catch (error) {
     // 토큰이 검증 실패했으면 만료된 아이디라는 오류 반환
     if (error.name === 'TokenExpiredError') {
+      res.clearCookie('accessToken');
       await Token.destroy({ where: { User_id: user_id } });
       return res.status(401).json({
         errorMessage: '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.',
@@ -329,10 +344,16 @@ router.post('/switchId/:user_id', authMiddleware, async (req, res) => {
 //로그아웃 API
 router.post('/logout/:user_id', authMiddleware, async (req, res) => {
   const { user_id } = req.params;
+  const { password } = req.body;
   const currentUser = res.locals.user;
   const user = await User.findOne({ where: { user_id } });
 
   try {
+    if (!password)
+      return res.status(400).json({
+        errorMessage: `비밀번호가 입력이 되지 않았습니다.`,
+      });
+
     if (!user)
       return res.status(404).json({
         errorMessage: '회원가입이 되어 있지 않은 아이디입니다. 회원가입 해주세요.',
@@ -340,6 +361,12 @@ router.post('/logout/:user_id', authMiddleware, async (req, res) => {
 
     const userInfo = await UserInfo.findOne({ where: { User_id: user.user_id } });
     const existToken = await Token.findOne({ where: { User_id: user.user_id } });
+
+    const existChangePermission = await bcrypt.compare(password, user.password);
+    if (!existChangePermission)
+      return res.status(400).json({
+        errorMessage: `${userInfo.name}님의 비밀번호와 일치하지 않아 계정 전환을 할 수 없습니다.`,
+      });
 
     if (!existToken)
       return res.status(404).json({
@@ -349,9 +376,6 @@ router.post('/logout/:user_id', authMiddleware, async (req, res) => {
     await Token.destroy({ where: { User_id: user_id } });
 
     if (user_id / 1 === currentUser.User_id) res.clearCookie('accessToken');
-
-    //현재 쿠키를 지움으로써 로그아웃, 쿠키이름은 지정되면 변경
-    // res.redirect('/');
 
     return res.status(200).json({ message: `${userInfo.name}님이 로그아웃 되었습니다.` });
   } catch (error) {

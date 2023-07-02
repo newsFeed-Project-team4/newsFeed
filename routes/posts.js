@@ -1,7 +1,6 @@
 const express = require('express');
 const { Post, Like } = require('../models');
 const { Op } = require('sequelize');
-const sharp = require('sharp');
 const fs = require('fs');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
@@ -35,7 +34,7 @@ router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
       });
     }
     const imageTag = filepath
-      ? `<img src="${filepath}" class="postImage" alt="./image/defaultImage.jpg" />`
+      ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
       : '';
 
     const post = await Post.create({
@@ -84,14 +83,14 @@ router.get('/posts/:post_id', async (req, res) => {
   try {
     const { post_id } = req.params;
     const post = await Post.findOne({
-      attributes: ['post_id', 'User_id', 'title', 'Name', 'content', 'created_at', 'updated_at'],
+      attributes: ['post_id', 'User_id', 'image_url', 'title', 'Name', 'content', 'created_at'],
       where: { post_id },
     });
     if (!post) {
       return res.status(404).json({ errorMessage: '해당 게시글을 찾을 수 없습니다.' });
     }
 
-    return res.status(200).json({ data: post });
+    return res.status(200).json({ post });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 조회에 실패했습니다.' });
@@ -181,12 +180,14 @@ router.post('/lookup', async (req, res) => {
 });
 
 // 게시글 수정
-router.put('/posts/:post_id', authMiddleware, async (req, res) => {
-  try {
-    const { post_id } = req.params;
-    const { User_id } = res.locals.user;
-    const { title, content } = req.body;
+router.put('/posts/:post_id', authMiddleware, uploadMiddleware, async (req, res) => {
+  let filepath = req.file ? req.file.location : null;
 
+  const { post_id } = req.params;
+  const { User_id } = res.locals.user;
+  const { title, content } = req.body;
+
+  try {
     // 게시글을 조회합니다.
     const post = await Post.findByPk(post_id);
 
@@ -203,21 +204,32 @@ router.put('/posts/:post_id', authMiddleware, async (req, res) => {
         .json({ errorMessage: '게시글 제목이나 내용이 빈 내용인지 확인해 주세요.' });
     }
 
-    // 게시글의 권한을 확인하고, 게시글을 수정합니다.
-    await Post.update(
-      { title, content }, // title과 content 컬럼을 수정합니다.
-      {
-        where: {
-          post_id,
-          User_id: User_id,
+    if (filepath) {
+      const imageTag = `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`;
+      await Post.update(
+        { image_url: imageTag, title, content },
+        {
+          where: {
+            post_id,
+            User_id: User_id,
+          },
         },
-      },
-    );
+      );
+      return res.status(200).json({ message: '수정이 완료되었습니다.' });
+    } else {
+      // 게시글의 권한을 확인하고, 게시글을 수정합니다.
+      await Post.update(
+        { title, content }, // title과 content 컬럼을 수정합니다.
+        {
+          where: {
+            post_id,
+            User_id: User_id,
+          },
+        },
+      );
 
-    // 수정된 게시글을 조회합니다.
-    const updatedPost = await Post.findByPk(post_id);
-
-    return res.status(200).json({ message: '수정이 완료되었습니다.', post: updatedPost });
+      return res.status(200).json({ message: '수정이 완료되었습니다.' });
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 수정에 실패했습니다.' });

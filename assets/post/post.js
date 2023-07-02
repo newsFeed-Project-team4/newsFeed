@@ -4,6 +4,8 @@ $(document).ready(() => {
 
 const printPosts = document.querySelector('.printPosts');
 const searchPosts = document.querySelector('.search');
+const loginInfoBtn = document.querySelector('#loginInfoBtn');
+const loginInfo = document.querySelector('#loginInfo');
 
 //전체 게시글 출력
 function getPosts() {
@@ -17,7 +19,7 @@ function getPosts() {
         let Img = '';
         post.image_url
           ? (Img = post.image_url)
-          : (Img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />');
+          : (Img = '<img src="../image/defaultImage.jpg" id="priview" class="postImage" />');
 
         let likes = posts[idx].Likes.length;
         results += `
@@ -54,8 +56,20 @@ function getPosts() {
 
 //게시글 수정
 function modifyPost(Ids) {
-  const [postId, userId] = [Ids.getAttribute('modifyPostId'), Ids.getAttribute('modifyUserId')];
-  window.open(`../writePost/writePost.html?postId=${postId}&userId=${userId}`, '_self');
+  const [post_id, user_id] = [Ids.getAttribute('modifyPostId'), Ids.getAttribute('modifyUserId')];
+  $.ajax({
+    type: 'GET',
+    url: `/accessRight/${user_id}`,
+    success: function (data) {
+      if (data.message) {
+        window.open(`../writePost/writePost.html?postId=${post_id}`, '_self');
+      }
+    },
+    error: () => {
+      alert('게시글 수정 권한이 없습니다.');
+      return;
+    },
+  });
 }
 
 //게시글 삭제
@@ -157,4 +171,80 @@ function postDetail(id) {
   window.open(`../detailPost/detailPost.html?postId=${postId}`, '_self');
 }
 
+function showLoginInfo() {
+  if (loginInfo.style.display === 'none') {
+    loginInfo.innerHTML = '';
+    $.ajax({
+      type: 'GET',
+      url: '/loginUsersInfo',
+      success: (data) => {
+        let result = data.users;
+        console.log(result);
+        result.forEach((user, idx) => {
+          if (idx === 0) {
+            loginInfo.innerHTML += `<div id="login">
+                                      <label class="userName" style="color:red">현재 로그인 중 : ${user.User.email}</label>
+                                      <button type="button" onclick="logoutId(this)" class="btn btn-outline-danger" userId="${user.User_id}" id="logoutBtn">로그 아웃</button>
+                                      <button type="button" onclick="switchId(this)" class="btn btn-outline-warning"  userId="${user.User_id}" id="switchBtn">계정 전환</button>
+                                    </div>`;
+          } else {
+            loginInfo.innerHTML += `<div id="login">
+                                      <label class="userName">접속자 : ${user.User.email}</label>
+                                      <button type="button" onclick="logoutId(this)" class="btn btn-outline-danger" userId="${user.User_id}" id="logoutBtn">로그 아웃</button>
+                                      <button type="button" onclick="switchId(this)" class="btn btn-outline-warning"  userId="${user.User_id}" id="switchBtn">계정 전환</button>
+                                    </div>`;
+          }
+        });
+      },
+      error: () => {
+        const label = document.createElement('label');
+        loginInfo.style.width = '200px';
+        label.style.marginLeft = '20px';
+        label.style.fontSize = '20px';
+        label.innerText = '로그인이 필요합니다.';
+        loginInfo.appendChild(label);
+      },
+    });
+
+    loginInfo.style.display = 'block';
+  } else {
+    loginInfo.style.display = 'none';
+  }
+}
+
+function switchId(id) {
+  const userId = id.getAttribute('userId');
+  const password = prompt('해당 계정의 비밀번호를 입력해주세요.');
+  $.ajax({
+    type: 'POST',
+    url: `/switchId/${userId}`,
+    data: { password },
+    success: (data) => {
+      alert(data.message);
+      showLoginInfo();
+    },
+    error: (error) => {
+      alert(error.responseJSON.errorMessage);
+    },
+  });
+}
+
+function logoutId(id) {
+  const userId = id.getAttribute('userId');
+  const password = prompt('해당 계정의 비밀번호를 입력해주세요.');
+  $.ajax({
+    type: 'POST',
+    url: `/logout/${userId}`,
+    data: { password },
+    success: (data) => {
+      alert(data.message);
+      showLoginInfo();
+    },
+    error: (error) => {
+      alert(error.responseJSON.errorMessage);
+    },
+  });
+}
+
 searchPosts.addEventListener('submit', searchPost);
+loginInfoBtn.addEventListener('click', showLoginInfo);
