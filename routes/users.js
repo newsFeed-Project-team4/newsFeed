@@ -165,14 +165,14 @@ router.put('/login/:user_id', uploadMiddleware, authMiddleware, async (req, res)
   try {
     const user = await User.findOne({ where: { user_id } });
     if (!user)
-      return res.status(404).json({
-        errorMessage: '회원가입이 되어 있지 않은 아이디입니다. 회원가입 해주세요.',
+      return res.status(401).json({
+        errorMessage: '로그인 후에 이용할 수 있는 기능입니다.',
       });
 
     const existToken = await Token.findOne({ where: { User_id: user.user_id } });
     if (!existToken) {
-      return res.status(404).json({
-        errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
+      return res.status(401).json({
+        errorMessage: '로그인 후에 이용할 수 있는 기능입니다.',
       });
     }
 
@@ -334,15 +334,15 @@ router.post('/logout/:user_id', authMiddleware, async (req, res) => {
 
   try {
     if (!user)
-      return res.status(404).json({
-        errorMessage: '회원가입이 되어 있지 않은 아이디입니다. 회원가입 해주세요.',
+      return res.status(401).json({
+        errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
       });
 
     const userInfo = await UserInfo.findOne({ where: { User_id: user.user_id } });
     const existToken = await Token.findOne({ where: { User_id: user.user_id } });
 
     if (!existToken)
-      return res.status(404).json({
+      return res.status(401).json({
         errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
       });
 

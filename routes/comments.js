@@ -15,7 +15,7 @@ router.post('/posts/:post_id/comments', authMiddleware, async (req, res) => {
     const existToken = await Token.findOne({ where: { User_id: user.User_id } });
 
     if (!existToken) {
-      return res.status(404).json({
+      return res.status(401).json({
         errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
       });
     }
@@ -73,7 +73,7 @@ router.put('/posts/:post_id/comments/:comment_id', authMiddleware, async (req, r
     const existToken = await Token.findOne({ where: { User_id: user.user_id } });
 
     if (!existToken) {
-      return res.status(404).json({
+      return res.status(401).json({
         errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
       });
     }
@@ -114,7 +114,7 @@ router.delete('/posts/:post_id/comments/:comment_id', authMiddleware, async (req
     const existToken = await Token.findOne({ where: { User_id: user.user_id } });
 
     if (!existToken) {
-      return res.status(404).json({
+      return res.status(401).json({
         errorMessage: '로그인이 되어 있지 않은 아이디입니다.',
       });
     }
@@ -131,7 +131,7 @@ router.delete('/posts/:post_id/comments/:comment_id', authMiddleware, async (req
       where: { [Op.and]: [{ comment_id }, { User_id }, { Post_id: post_id }] },
     });
 
-    res.status(200).json({ message: '댓글이 삭제되었습니다.' });
+    res.status(204).json({ message: '댓글이 삭제되었습니다.' });
   } catch (error) {
     return res.status(500).json({ errorMessage: '댓글 삭제에 실패했습니다.' });
   }
