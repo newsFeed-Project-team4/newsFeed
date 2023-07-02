@@ -179,9 +179,13 @@ body {
   border-width: 2px;
   transition: transform 100ms ease-in;
 
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
-.post>div{
-  margin: 3% 3% 3% 3%;
+#postLike{
+  margin-right: 10%;
+  text-align: right;
 }
 
 .postImgBox {

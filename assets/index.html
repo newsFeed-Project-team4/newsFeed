@@ -218,9 +218,8 @@
                     for(let i = 0; i< 5; i++){                
                         const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
                                                 <div>
-                                                      <p style="text-align:left;">${arr[i][1].title}</p>
-                                                    
-                                                      <p style="text-align:right;">${arr[i][1].Name} 👍${arr[i][0]}</p>
+                                                      <h3 id="postTitle">${arr[i][1].title}</h3>                                                    
+                                                      <p id="postLike">${arr[i][1].Name} 👍${arr[i][0]}</p>
                                                   </div>
                                             </div>`
                         $('.postBox').append(postInnerHtml);
