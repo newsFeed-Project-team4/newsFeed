@@ -58,3 +58,49 @@ async function userInfoEdit(event) {
 }
 
 userInfoEditBtn.addEventListener('submit', userInfoEdit);
+
+const searchPosts = document.querySelector('.search');
+//검색
+function searchPost(event) {
+  event.preventDefault();
+  const searchInput = document.querySelector('#search-post').value;
+  const category = document.querySelector('#search-options').value;
+  let obj = {
+    searchInput,
+    category,
+  };
+  console.log(obj);
+  $.ajax({
+    type: 'POST',
+    url: '/lookup',
+    data: JSON.stringify(obj),
+    contentType: 'application/json',
+    success: function (data) {
+      let posts = data.searchPosts;
+      //밑 사진만 뜨는 박스
+      //최신순 공간에 검색한 정보 출력
+      $('.postImgBox').empty();
+      posts.forEach((post, idx) => {
+        let img = '';
+        let likes = posts[idx].Likes.length;
+        post.image_url
+          ? (img = post.image_url)
+          : (img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />');
+        let date =
+          '작성일자: ' + post.created_at.substring(0, 10).replace('-', '.').replace('-', '.');
+        const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${post.post_id})">
+                                <div class="imgBox">${img}</div>
+                                <p style="text-align:center;">${post.title}</p>
+                                <p style="text-align:center;">👍${likes}</p>
+                                <p style="text-align:center;">${date}</p>
+                              </div>`;
+        $('.postImgBox').append(postInnerHtml);
+      });
+    },
+    error: (error) => {
+      alert(error.responseJSON.errorMessage);
+    },
+  });
+}
+
+searchPosts.addEventListener('submit', searchPost);

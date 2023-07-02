@@ -5,11 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link href="./mystyle.css" rel="stylesheet" />
-    <script
-    src="https://code.jquery.com/jquery-3.5.1.js"
-    integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+    
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"
   ></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap');
+  </style>
   <script src="../userInfoEdit.js" defer></script>
   <script src="../animals.js"></script>
 </head>
@@ -18,7 +29,9 @@
         <div class="mytitle">
             <div class="titleName">
                 <h3>반려동물 이야기</h3>
-            </div>  
+            </div> 
+            <div id="weather-container"></div>
+            <script src="../weather.js"></script> 
             <form class="search">
                 <select id="search-options">
                   <option value="searchNone">선택</option>
@@ -28,18 +41,18 @@
                 </select>
                 <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
                 <button id="search-btn">검색</button>
-              </form>      
+              </form>    
         </div>
     </header>
     <main>
-        <div class="titleBtns">
+        <div class="navigator">
             <button type="button"
-            class="writePage"
+            class="writePage btn btn-outline-dark"
             onclick="postWrite()">게시글 작성</button>
             <button type="button"
-            class="printPosts"
-            onclick="printPosts()">전체 게시글 조회</button>
-        </div>
+            class="printPosts btn btn-outline-dark"
+            onclick="printPosts()">전체 게시글</button>
+          </div>
         <div class="modal" id="modal">
             <div class="form">
               <div>
@@ -72,10 +85,10 @@
                       <label for="confirmPwd">비밀번호 확인</label>
                       <input id="confirmPwd" class="modal-input" type="password" />
                     </div> 
-                    <button class="modal-btn" id="userInfoEdit">수정</button>                    
+                    <button class="modal-btn btn btn-outline-primary" id="userInfoEdit">수정</button>                    
                 </form>
-                <button class="passwordChangeBtn" onclick="passwordChange()">비밀번호 변경</button>
-                <button class="modal-btn" id="close1" onclick="close1()">닫기</button>
+                <button class="passwordChangeBtn btn btn-outline-dark" onclick="passwordChange()">비밀번호 변경</button>
+                <button class="modal-btn btn btn-outline-danger" id="close1" onclick="close1()">닫기</button>
             </div>
         </div>
         <div class="firstBox">
@@ -94,8 +107,8 @@
                         </div>
                     </div>
                     <div class="btnBox">
-                        <button class="userInfoBtn" onclick="userInfoBtn()">정보 수정</button>
-                        <button class="logoutBtn" onclick="logoutBtn()">로그아웃</button>
+                        <button class="userInfoBtn btn btn-outline-info" onclick="userInfoBtn()">정보 수정</button>
+                        <button class="logoutBtn btn btn-outline-danger" onclick="logoutBtn()">로그아웃</button>
                     </div>
                 </div>
             </div>
@@ -132,9 +145,12 @@
                 <label>확인용</label>
             </div>
         </div>
+        
     </main>
     <footer>
-
+        <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
+        <div id="animal-container"></div>
+        <script src="../animals.js"></script>
     </footer>
     <script> 
         const queryString = window.location.search;
@@ -156,6 +172,10 @@
         
         $(document).ready(()=>{
             getPosts();
+            if($('#afterPwd1').css("display") != "none"){
+                $("#afterPwd1").hide();
+                $('#confirmPwd1').hide();
+            }
         })
 
         //모달 창 열기
@@ -237,34 +257,24 @@
                     for(let i = 0; i< 5; i++){                
                         const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
                                                 <div>
-                                                      <p style="text-align:left;">${arr[i][1].title}</p>
-                                                    
-                                                      <p style="text-align:right;">${arr[i][1].Name} ❤️${arr[i][0]}</p>
+                                                      <h3 id="postTitle">${arr[i][1].title}</h3>                                                    
+                                                      <p id="postLike">${arr[i][1].Name} 👍${arr[i][0]}</p>
                                                   </div>
                                             </div>`
                         $('.postBox').append(postInnerHtml);
                     }
-                    //밑 사진만 뜨는? 박스
-                    let imageArr = new Array(posts.length);
-                    for(let i = 0; i < arr.length; i++){
-                        imageArr[i] = new Array(2);
-                    }
-                    for(let i in posts){
-                        if(!posts[i].content){
-                            imageArr[i][0] = posts[i].Likes.length;
-                            imageArr[i][1] = posts[i];
-                        }
-                    }
-                    imageArr.sort((a,b)=>b[0]-a[0]);
-                    console.log(imageArr);
+                    //밑 사진만 뜨는 박스
+                    //최신순                    
                     $('.postImgBox').empty();
                     for(let i = 0; i< 5; i++){
                       let img = '';
-                      imageArr[i][1].image_url ? img = imageArr[i][1].image_url : img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />';
-                      
-                      const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${imageArr[i][1].post_id})">
+                      posts[i].image_url ? img = posts[i].image_url : img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />';
+                      let date = '작성일자: ' + posts[i].created_at.substring(0, 10).replace('-', '.').replace('-', '.');
+                      const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${posts[i].post_id})">
                                               <div class="imgBox">${img}</div>
-                                              <p style="text-align:center;">❤️${imageArr[i][0]}</p>
+                                              <p style="text-align:center;">${posts[i].title}</p>
+                                              <p style="text-align:center;">👍${posts[i].Likes.length}</p>
+                                              <p style="text-align:center;">${date}</p>
                                             </div>`
                       $('.postImgBox').append(postInnerHtml);
                     }
@@ -275,6 +285,9 @@
         function postDetail(post_id){              
             window.location.href =`/detailPost/detailPost.html?postId=${post_id}`;
         }
+
+        //검색
+        
     </script>
 </body>
 </html>
