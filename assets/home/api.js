@@ -79,7 +79,7 @@ function searchPost(event) {
         const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${post.post_id})">
                                 <div class="imgBox">${img}</div>
                                 <p style="text-align:center;">${post.title}</p>
-                                <p style="text-align:center;">👍:${likes}</p>
+                                <p style="text-align:center;">👍 ${likes}</p>
                                 <p style="text-align:center;">${date}</p>
                               </div>`;
         $('.postImgBox').append(postInnerHtml);

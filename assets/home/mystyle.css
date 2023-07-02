@@ -23,6 +23,7 @@ body {
   width: 100vw;
   box-sizing: border-box;
   height: 150px;
+  font-size: 17px;
 
   background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url('https://i.postimg.cc/WzFLRMgm/My-Photo-1218898596-0549.jpg');
@@ -41,8 +42,21 @@ body {
 .mytitle .titleName {
   height: 50px;
 }
+
+.titleName {
+  font-size: 47px;
+}
+
 .mytitle .search {
   margin: 10px 0 0 0;
+}
+
+#postTitle {
+  margin-top: 10px;
+}
+
+#postLike {
+  margin-bottom: 20px;
 }
 
 .modal {
@@ -54,7 +68,6 @@ body {
   padding: 30px;
   display: none;
   align-items: center;
-  
 }
 .show-modal {
   display: block;
@@ -86,7 +99,6 @@ body {
   border-style: solid;
   border-width: 2px;
   margin-top: 5px;
-  
 }
 
 .modal-input {
@@ -109,13 +121,17 @@ body {
   /* background-color: antiquewhite; */
 
   padding: 5px 5px 5px 0;
-  margin: 10px auto 10px auto;
+  margin: 30px auto 10px auto;
 }
 
-.userInfoBox {  
+.userInfoBoxLogin {
   display: block;
   width: 25%;
+  height: 25%;
   padding: 8px;
+  margin-top: 0.3%;
+  margin-left: 3%;
+  top: 400px;
 
   border-radius: 10px;
   background-color: var(--bg-card-color);
@@ -127,21 +143,82 @@ body {
   transition: transform 100ms ease-in;
   position: absolute;
 }
-.loginForm>button{
+
+.userInfoBox {
+  display: block;
+  width: 25%;
+  height: 55.5%;
+  padding: 8px;
+  margin-top: 0.3%;
+  margin-left: 3%;
+
+  border-radius: 10px;
+  background-color: var(--bg-card-color);
+  border: 1px solid rgb(0, 0, 0);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px;
+
+  font-weight: bold;
+  border-width: 2px;
+  transition: transform 100ms ease-in;
+  position: absolute;
+}
+
+#profile_image {
+  width: 250px;
+  height: 250px;
+  border-radius: 10px;
+}
+
+.userInfo {
+  margin-top: 10px;
+}
+
+.userInfo > p {
+  font-size: 25px;
+}
+
+#userOneLine {
+  font-size: 25px;
+}
+
+.btnBox > button {
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  margin-top: 5px;
+}
+
+.mainLoginForm {
+  margin-top: 50px;
+}
+
+.loginForm > button {
   margin-top: 3%;
 }
-.loginBox{
+.loginBox {
+  margin-top: 20px;
   justify-self: center;
-  
+
   justify-content: center;
   align-items: center;
   text-align: center;
   transition: transform 100ms ease-in;
-  
 }
 
+.loginBtn {
+  margin-left: 150px;
+}
 
-.postBox{
+.loginBtn > button {
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+  margin-right: 10px;
+}
+
+.postBox {
   width: 70%;
 
   height: 490px;
@@ -151,7 +228,6 @@ body {
   align-items: center;
   justify-content: center;
   display: block;
-  
 
   position: absolute;
 }
@@ -160,14 +236,16 @@ body {
   margin-bottom: 5px;
 }
 
-.post{
+.post {
+  position: relative;
+  z-index: 1;
   display: block;
-  width: 90%;
+  width: 82%;
   height: 100px;
   margin: 10px;
   padding: 10px;
   justify-self: center;
-  
+
   border-radius: 10px;
   background-color: var(--bg-card-color);
   border: 1px solid rgb(0, 0, 0);
@@ -182,7 +260,7 @@ body {
   align-items: center;
   text-align: center;
 }
-#postLike{
+#postLike {
   margin-right: 10%;
   text-align: right;
 }
@@ -204,11 +282,11 @@ body {
   /* background-color: rgb(232, 223, 199); */
 }
 
-.postBottomBox {  
+.postBottomBox {
   display: block;
-  padding: 10px;
+  padding: 10px 10px 0px 10px;
   margin: 2.5%;
-  
+
   border-radius: 10px;
   background-color: var(--bg-card-color);
   border: 1px solid rgb(0, 0, 0);
@@ -224,7 +302,7 @@ body {
 }
 
 .imgBox {
-  background-color: greenyellow;
+  margin-top: 10px;
   width: 200px;
   height: 200px;
 
@@ -233,11 +311,16 @@ body {
 .imgBox > img {
   width: 100%;
   height: 100%;
+  border-radius: 10px;
+}
+
+.bottomTitle {
+  margin-top: 15px;
 }
 
 /* 검색 영역 설정 */
 .search {
-  margin: 10px 34% 0px auto;
+  margin: 10px 29.5% 0px auto;
   display: flex;
 
   width: 100%;
@@ -277,9 +360,10 @@ body {
 
 .navigator {
   display: block;
-  margin: 40px 50px 10px 40px;
+  position: relative;
+  margin: 40px 7.8% 10px 40px;
 }
-  
+
 .navigator > button {
   float: right;
   font-weight: bold;
@@ -291,6 +375,55 @@ body {
 
 .navigator > #homeBtn {
   float: left;
+}
+
+.navigator > div {
+  position: absolute;
+  z-index: 2;
+  width: 500px;
+  right: 50px;
+  top: 55px;
+  background-color: whitesmoke;
+  font-weight: bold;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.userName {
+  padding-left: 20px;
+  padding-bottom: 5px;
+  margin-top: 7.5px;
+  margin-bottom: 7.5px;
+  font-size: 16px;
+}
+
+#switchBtn {
+  float: right;
+  font-weight: bold;
+  margin-top: 7.5px;
+  margin-bottom: 7.5px;
+  margin-right: 10px;
+  width: 80px;
+  height: 27px;
+  font-size: 12px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
+}
+
+#logoutBtn {
+  float: right;
+  font-weight: bold;
+  margin-top: 7.5px;
+  margin-bottom: 7.5px;
+  margin-right: 10px;
+  width: 80px;
+  height: 25px;
+  font-size: 12px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 2px;
 }
 
 #toggleButton {

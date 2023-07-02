@@ -78,7 +78,8 @@ function deletePost(post) {
   $.ajax({
     type: 'DELETE',
     url: `/posts/${postId}`,
-    success: function (data) {
+    success: (data) => {
+      console.log(data);
       alert(data.message);
       getPosts();
     },
@@ -131,7 +132,7 @@ function searchPost(event) {
         let Img = '';
         post.image_url
           ? (Img = post.image_url)
-          : (Img = '<img src="../image/defaultImage.jpg" class="postImage" alt= />');
+          : (Img = '<img src="../image/defaultImage.jpg" class="postImage" />');
 
         let likes = posts[idx].Likes.length;
         results += `
@@ -179,7 +180,6 @@ function showLoginInfo() {
       url: '/loginUsersInfo',
       success: (data) => {
         let result = data.users;
-        console.log(result);
         result.forEach((user, idx) => {
           if (idx === 0) {
             loginInfo.innerHTML += `<div id="login">
@@ -221,7 +221,11 @@ function switchId(id) {
     data: { password },
     success: (data) => {
       alert(data.message);
+      // window.localStorage.removeItem('response');
+      // const objString = JSON.stringify(data.existUserInfo);
+      // localStorage.setItem('response', objString);
       showLoginInfo();
+      // window.location.reload();
     },
     error: (error) => {
       alert(error.responseJSON.errorMessage);
@@ -238,6 +242,11 @@ function logoutId(id) {
     data: { password },
     success: (data) => {
       alert(data.message);
+      // const user_info = JSON.parse(localStorage.getItem('response'));
+      // if (data.userInfo.User_id == user_info.User_id) {
+      //   window.localStorage.removeItem('response');
+      //   window.location.reload();
+      // }
       showLoginInfo();
     },
     error: (error) => {

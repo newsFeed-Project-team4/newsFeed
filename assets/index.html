@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>반려동물 이야기</title>
     <link href="./home/mystyle.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -25,21 +25,11 @@
   <body>
     <header>
       <div class="mytitle">
-        <div class="titleName">
-          <h3>반려동물 이야기</h3>
+        <div>
+          <h3 class="titleName">반려동물 이야기</h3>
         </div>
         <div id="weather-container"></div>
-        <script src="weather.js"></script>
-        <form class="search">
-          <select id="search-options">
-            <option value="searchNone">선택</option>
-            <option value="searchTitle">제목</option>
-            <option value="searchContent">제목&내용</option>
-            <option value="searchAll">통합검색</option>
-          </select>
-          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
-          <button id="search-btn">검색</button>
-        </form>
+        <script src="./weather/weather.js"></script>
       </div>
     </header>
     <main>
@@ -50,6 +40,16 @@
         <button type="button" class="printPosts btn btn-outline-dark" onclick="printPosts()">
           전체 게시글
         </button>
+        <form class="search">
+          <select id="search-options">
+            <option value="searchNone">선택</option>
+            <option value="searchTitle">제목</option>
+            <option value="searchContent">제목&내용</option>
+            <option value="searchAll">통합검색</option>
+          </select>
+          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
+          <button id="search-btn">검색</button>
+        </form>
       </div>
       <div class="modal" id="modal2">
         <div class="form">
@@ -91,8 +91,8 @@
         </div>
       </div>
       <div class="firstBox">
-        <div class="userInfoBox">
-          <div class="loginForm" id="loginForm">
+        <div class="userInfoBoxLogin">
+          <div class="mainLoginForm" id="loginForm">
             <div class="input-group mb-3">
               <span class="input-group-text" id="basic-addon1">email</span>
               <input
@@ -115,24 +115,15 @@
                 aria-describedby="basic-addon1"
               />
             </div>
-            <div>
-              <button class="submit btn btn-outline-primary" onclick="sign_in()">로그인</button>
-              <button class="signUpModal btn btn-outline-info" onclick="signUpModal()">
-                회원가입
-              </button>
-            </div>
+          </div>
+          <div class="loginBtn">
+            <button class="submit btn btn-outline-primary" onclick="sign_in()">로그인</button>
+            <button class="signUpModal btn btn-outline-info" onclick="signUpModal()">
+              회원가입
+            </button>
           </div>
         </div>
         <div class="postBox">
-          <div class="post">
-            <p>확인용</p>
-          </div>
-          <div class="post">
-            <p>확인용</p>
-          </div>
-          <div class="post">
-            <p>확인용</p>
-          </div>
           <div class="post">
             <p>확인용</p>
           </div>
@@ -143,20 +134,19 @@
           <div class="imgBox"></div>
           <label>확인용</label>
         </div>
-        <div class="postBottomBox">
-          <div class="imgBox"></div>
-          <label>확인용</label>
-        </div>
-        <div class="postBottomBox">
-          <div class="imgBox"></div>
-          <label>확인용</label>
-        </div>
       </div>
     </main>
     <footer>
       <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
       <div id="animal-container"></div>
-      <script src="./animals.js"></script>
+      <script>
+        function openAnimalWindow() {
+          window.open('../animals/animals.html', '_blank', 'width=900,height=600');
+        }
+        document.getElementById('toggleButton').addEventListener('click', function () {
+          openAnimalWindow();
+        });
+      </script>
     </footer>
     <script>
       //모달 창 열기
@@ -246,7 +236,7 @@
                 posts[i].created_at.substring(0, 10).replace('-', '.').replace('-', '.');
               const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${posts[i].post_id})">
                                               <div class="imgBox">${img}</div>
-                                              <p style="text-align:center;">${posts[i].title}</p>
+                                              <p style="text-align:center;" class="bottomTitle">${posts[i].title}</p>
                                               <p style="text-align:center;">👍 ${posts[i].Likes.length}</p>
                                               <p style="text-align:center;">${date}</p>
                                             </div>`;

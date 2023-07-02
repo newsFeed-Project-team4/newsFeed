@@ -132,7 +132,7 @@ router.delete('/posts/:post_id/comments/:comment_id', authMiddleware, async (req
       where: { [Op.and]: [{ comment_id }, { User_id }, { Post_id: post_id }] },
     });
 
-    res.status(204).json({ message: '댓글이 삭제되었습니다.' });
+    res.status(200).json({ message: '댓글이 삭제되었습니다.' });
   } catch (error) {
     return res.status(500).json({ errorMessage: '댓글 삭제에 실패했습니다.' });
   }

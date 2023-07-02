@@ -15,11 +15,10 @@ module.exports = async (req, res, next) => {
       });
       return;
     }
-    console.log('여기 상황아님?');
+
     // case 2) refreshToken들만 있을 때(accessToken만료가 아닌 쿠키 삭제로 인해 없는 경우)
     // refreshToken을 검증 해서 검증이 되면 새 accessToken을 발급해서 쿠키에 저장
     if (existReFreshToken && !accessAuthType && !accessAuthToken) {
-      console.log('여기 상황아님?');
       jwt.verify(existReFreshToken.token_id, process.env.JWT_SECRET_KEY);
       const accessToken = jwt.sign(
         { User_id: existReFreshToken.User_id },

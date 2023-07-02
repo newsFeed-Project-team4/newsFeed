@@ -1,4 +1,6 @@
 //회원 정보 수정 form
+$(document).ready(() => {});
+
 const userInfoEditBtn = document.querySelector('.userInfoEditForm');
 
 async function userInfoEdit(event) {

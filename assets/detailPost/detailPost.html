@@ -26,18 +26,59 @@
       @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
     </style>
     <script>
-      function homeBack() {
-        const userInfo = JSON.parse(localStorage.getItem('response'));
-        if (!userInfo) {
-          window.location.replace(`/`);
-        } else window.location.replace(`/home/home.html?id=${userInfo.User_id}`);
+      function home() {
+        $.ajax({
+          type: 'GET',
+          url: '/loginUserInfo',
+          success: (data) => {
+            const UserId = data.users.User_id;
+            if (data.users.User_id) {
+              window.location.href = `../home/home.html?id=${UserId}`;
+            }
+          },
+          error: (error) => {
+            console.log(error.responseJSON.errorMessage);
+            alert('로그인 된 아이디가 없어 로그인 가능한 홈 화면으로 이동합니다.');
+            window.location.href = '/';
+          },
+        });
       }
       function allPost() {
         window.location.href = '../post/post.html';
       }
+      function writePost() {
+        $.ajax({
+          type: 'GET',
+          url: '/loginUserInfo',
+          success: (data) => {
+            const UserId = data.users.User_id;
+            if (data.users.User_id) {
+              window.location.replace(`../writePost/writePost.html?id=${UserId}`);
+            } else {
+              alert('로그인 후 이용 가능합니다.');
+            }
+          },
+          error: (error) => {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
+
+      function addLogin() {
+        window.location.href = '/';
+      }
     </script>
   </head>
   <body>
+    <header>
+      <div class="mytitle">
+        <div>
+          <h3 class="titleName">반려동물 이야기</h3>
+        </div>
+        <div id="weather-container"></div>
+        <script src="../weather/weather.js"></script>
+      </div>
+    </header>
     <div class="navigator">
       <button type="button" id="postBtn" class="btn btn-outline-dark" onclick="writePost()">
         게시글 작성
@@ -45,9 +86,10 @@
       <button type="button" id="allPostBtn" class="btn btn-outline-dark" onclick="allPost()">
         전체 게시판
       </button>
-      <button type="button" id="homeBtn" class="btn btn-outline-dark" onclick="homeBack()">
-        🏠
-      </button>
+      <button type="button" id="loginInfoBtn" class="btn btn-outline-dark">로그인 정보 확인</button>
+      <div id="loginInfo" style="display: none"></div>
+      <button class="btn btn-outline-dark" onclick="addLogin()">로그인 하러 가기</button>
+      <button type="button" id="homeBtn" class="btn btn-outline-dark" onclick="home()">🏠</button>
     </div>
     <container class="detailPost">
       <div class="card border-secondary mb-3" id="detailBody">

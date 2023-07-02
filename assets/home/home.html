@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>반려동물 이야기</title>
     <link href="./mystyle.css" rel="stylesheet" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -25,21 +25,11 @@
   <body>
     <header>
       <div class="mytitle">
-        <div class="titleName">
-          <h3>반려동물 이야기</h3>
+        <div>
+          <h3 class="titleName">반려동물 이야기</h3>
         </div>
         <div id="weather-container"></div>
         <script src="../weather/weather.js"></script>
-        <form class="search">
-          <select id="search-options">
-            <option value="searchNone">선택</option>
-            <option value="searchTitle">제목</option>
-            <option value="searchContent">제목&내용</option>
-            <option value="searchAll">통합검색</option>
-          </select>
-          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
-          <button id="search-btn">검색</button>
-        </form>
       </div>
     </header>
     <main>
@@ -50,6 +40,20 @@
         <button type="button" class="printPosts btn btn-outline-dark" onclick="printPosts()">
           전체 게시글
         </button>
+        <button type="button" id="loginInfoBtn" class="btn btn-outline-dark">
+          로그인 정보 확인
+        </button>
+        <div id="loginInfo" style="display: none"></div>
+        <form class="search">
+          <select id="search-options">
+            <option value="searchNone">선택</option>
+            <option value="searchTitle">제목</option>
+            <option value="searchContent">제목&내용</option>
+            <option value="searchAll">통합검색</option>
+          </select>
+          <input id="search-post" placeholder="다양한 게시글을 검색해 보세요" />
+          <button id="search-btn">검색</button>
+        </form>
       </div>
       <div class="modal" id="modal">
         <div class="form">
@@ -74,11 +78,11 @@
               <div class="userInfoEditImgBox">
                 <input type="file" id="newFile" name="newFile" />
               </div>
-              <div class="input" id="afterPwd1">
+              <div class="input" id="afterPwd1" style="display: none">
                 <label for="afterPwd">변경할 비밀번호</label>
                 <input id="afterPwd" class="modal-input" type="password" />
               </div>
-              <div class="input" id="confirmPwd1">
+              <div class="input" id="confirmPwd1" style="display: none">
                 <label for="confirmPwd">비밀번호 확인</label>
                 <input id="confirmPwd" class="modal-input" type="password" />
               </div>
@@ -92,70 +96,147 @@
             </button>
           </div>
         </div>
-        </div>
-        <div class="firstBox">
-          <div class="userInfoBox">
-            <div class="loginBox" id="loginBox">
-              <div>
-                <div class="imageBox">
-                  <img id="profile_image" width="150" height="150" />
-                </div>
-                <div class="userInfo">
-                  <p id="userInfoName"></p>
-                  <p id="userInfoPetName"></p>
-                </div>
-                <div class="userOneLineComment">
-                  <p id="userOneLine"></p>
-                </div>
+      </div>
+      <div class="firstBox">
+        <div class="userInfoBox">
+          <div class="loginBox" id="loginBox">
+            <div>
+              <div class="imageBox">
+                <img id="profile_image" width="150" height="150" />
               </div>
-              <div class="btnBox">
-                <button class="userInfoBtn btn btn-outline-info" onclick="userInfoBtn()">
-                  정보 수정
-                </button>
-                <button class="logoutBtn btn btn-outline-danger" onclick="logoutBtn()">
-                  로그아웃
-                </button>
+              <div class="userInfo">
+                <p id="userInfoName"></p>
+                <p id="userInfoPetName"></p>
+              </div>
+              <div class="userOneLineComment">
+                <p id="userOneLine"></p>
               </div>
             </div>
-          </div>
-          <div class="postBox">
-            <div class="post"></div>
+            <div class="btnBox">
+              <button class="userInfoBtn btn btn-outline-info" onclick="userInfoBtn()">
+                정보 수정
+              </button>
+              <button class="btn btn-outline-warning" onclick="addLogin()">추가 로그인</button>
+            </div>
           </div>
         </div>
-        <div class="postImgBox">
-          <div class="postBottomBox">
-            <div class="imgBox"></div>
-          </div>
+        <div class="postBox">
+          <div class="post"></div>
+        </div>
+      </div>
+      <div class="postImgBox">
+        <div class="postBottomBox">
+          <div class="imgBox"></div>
         </div>
       </div>
     </main>
     <footer>
       <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
       <div id="animal-container"></div>
+      <script>
+        function openAnimalWindow() {
+          window.open('../animals/animals.html', '_blank', 'width=900,height=600');
+        }
+        document.getElementById('toggleButton').addEventListener('click', function () {
+          openAnimalWindow();
+        });
+      </script>
     </footer>
     <script>
       const queryString = window.location.search;
       const urlParams = new URLSearchParams(queryString);
       const user_id = urlParams.get('id');
-      const user_info = JSON.parse(localStorage.getItem('response'));
-      //value에 값넣기
-      $('input[id=name]').attr('value', user_info.name);
-      $('input[id=petName]').attr('value', user_info.pet_name);
-      $('input[id=onLiner]').attr('value', user_info.one_line_introduction);
-      $('input[id=newFile]').attr('value', user_info.image_url);
-      document.getElementById('userInfoName').innerHTML = '이름: ' + user_info.name;
-      document.getElementById('userInfoPetName').innerHTML = '반려동물 명: ' + user_info.pet_name;
-      document.getElementById('userOneLine').innerHTML =
-        '한마디: ' + user_info.one_line_introduction;
-      if (!user_info.image_url) document.getElementById('profile_image').src = '../image/cat.jpg';
-      else document.getElementById('profile_image').src = user_info.image_url;
-      $(document).ready(() => {
-        getPosts();
-        if ($('#afterPwd1').css('display') != 'none') {
-          $('#afterPwd1').hide();
-          $('#confirmPwd1').hide();
+      // const user_info = JSON.parse(localStorage.getItem('response'));
+      $(document).ready(async () => {
+        if (!user_id) {
+          alert('잘못된 접근입니다. 로그인부터 해주세요.');
+          window.location.href = '/';
         }
+        invalidId();
+        // noneUserId(user_id);
+        let User_id = 0;
+        await $.ajax({
+          type: 'GET',
+          url: '/loginUserInfo',
+          success: (data) => {
+            User_id = data.users.User_id;
+          },
+        });
+
+        getLoginInfo(User_id);
+        getPosts();
+        // if ($('#afterPwd1').css('display') != 'none') {
+        //   $('#afterPwd1').hide();
+        //   $('#confirmPwd1').hide();
+        // }
       });
+
+      function invalidId() {
+        $.ajax({
+          type: 'GET',
+          url: '/loginUsersInfo',
+          success: (data) => {
+            const results = data.users;
+            const loginArr = [];
+            results.forEach((user) => {
+              loginArr.push(user.User_id);
+            });
+            if (loginArr.includes(user_id)) {
+              if (user_id / 1 !== user.User_id / 1) {
+                alert('로그인 되어 있지 않은 아이디입니다. 로그인부터 해주세요.');
+                window.location.href = '/';
+              }
+            }
+          },
+          error: (error) => {
+            alert(error.responseJSON.errorMessage);
+            window.location.href = '/';
+          },
+        });
+      }
+
+      //params로 받아오는 user_id값이 없는 값일 경우 처리
+      // function noneUserId(user_id) {
+      //   $.ajax({
+      //     url: `/accessRight/${user_id}`,
+      //     type: 'GET',
+      //     error: function (error) {
+      //       alert(error.responseJSON.errorMessage);
+      //       if (!user_info) window.location.href = '/';
+      //       else window.location.replace(`/home/home.html?id=${user_info.User_id}`);
+      //     },
+      //     success: function (response) {},
+      //   });
+      // }
+      function getLoginInfo(user_id) {
+        $.ajax({
+          type: 'GET',
+          url: `/loginUserInfo/${user_id}`,
+          success: (data) => {
+            const user_info = data.userInfo;
+            $('input[id=name]').attr('value', user_info.name);
+            $('input[id=petName]').attr('value', user_info.pet_name);
+            $('input[id=onLiner]').attr('value', user_info.one_line_introduction);
+            $('input[id=newFile]').attr('value', user_info.image_url);
+            document.getElementById('userInfoName').innerHTML = '이름: ' + user_info.name;
+            document.getElementById('userInfoPetName').innerHTML =
+              '반려동물 명: ' + user_info.pet_name;
+            document.getElementById('userOneLine').innerHTML =
+              '한마디: ' + user_info.one_line_introduction;
+            if (!user_info.image_url)
+              document.getElementById('profile_image').src = '../image/cat.jpg';
+            else document.getElementById('profile_image').src = user_info.image_url;
+          },
+          error: (error) => {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
+      //value에 값넣기
+
+      function addLogin() {
+        window.location.href = '/';
+      }
       //모달 창 열기
       function userInfoBtn() {
         if ($('#modal').css('display') == 'none') {
@@ -176,30 +257,28 @@
           $('#confirmPwd1').hide();
         }
       }
-      //로그아웃
-      function logoutBtn() {
+
+      //게시글 작성
+      function postWrite() {
         $.ajax({
-          type: 'POST',
-          url: `/logout/${user_id}`,
-          error: function (error) {
-            alert(error.responseJSON.errorMessage);
+          type: 'GET',
+          url: '/loginUserInfo',
+          success: (data) => {
+            const UserId = data.users.User_id;
+            if (data.users.User_id) {
+              window.location.replace(`../writePost/writePost.html?id=${UserId}`);
+            } else {
+              alert('로그인 후 이용 가능합니다.');
+            }
           },
-          success: function (response) {
-            window.localStorage.removeItem('response');
-            alert(response.message);
-            window.location.replace(`/`);
+          error: (error) => {
+            alert(error.responseJSON.errorMessage);
           },
         });
       }
-      //게시글 작성
-      function postWrite() {
-        window.location.replace(`/writePost/writePost.html?id=${user_info.User_id}`);
-      }
       //전체 게시글 조회
       function printPosts() {
-        const userInfo = JSON.parse(localStorage.getItem('response'));
-        if (!userInfo) window.location.replace(`/post/post.html`);
-        else window.location.replace(`/post/post.html?id=${userInfo.User_id}`);
+        window.location.replace(`/post/post.html`);
       }
       //게시글 get
       function getPosts() {
@@ -220,16 +299,15 @@
               arr[i][1] = posts[i];
             }
             arr.sort((a, b) => b[0] - a[0]);
-            console.log(arr);
             //title만 뜨는? 박스
             $('.postBox').empty();
             for (let i = 0; i < 5; i++) {
               const postInnerHtml = `<div class="post" onclick="postDetail(${arr[i][1].post_id})">
-                                                <div>
-                                                      <h3 id="postTitle">${arr[i][1].title}</h3>
-                                                      <p id="postLike">${arr[i][1].Name} 👍 ${arr[i][0]}</p>
-                                                  </div>
-                                            </div>`;
+                                                  <div>
+                                                        <h3 id="postTitle">${arr[i][1].title}</h3>
+                                                        <p id="postLike">${arr[i][1].Name} 👍 ${arr[i][0]}</p>
+                                                    </div>
+                                              </div>`;
               $('.postBox').append(postInnerHtml);
             }
             //밑 사진만 뜨는 박스
@@ -244,11 +322,11 @@
                 '작성일자: ' +
                 posts[i].created_at.substring(0, 10).replace('-', '.').replace('-', '.');
               const postInnerHtml = `<div class="postBottomBox" onclick="postDetail(${posts[i].post_id})">
-                                              <div class="imgBox">${img}</div>
-                                              <p style="text-align:center;">${posts[i].title}</p>
-                                              <p style="text-align:center;">👍 ${posts[i].Likes.length}</p>
-                                              <p style="text-align:center;">${date}</p>
-                                            </div>`;
+                                                <div class="imgBox">${img}</div>
+                                                <p style="text-align:center;" class="bottomTitle">${posts[i].title}</p>
+                                                <p style="text-align:center;">👍 ${posts[i].Likes.length}</p>
+                                                <p style="text-align:center;">${date}</p>
+                                              </div>`;
               $('.postImgBox').append(postInnerHtml);
             }
           },
@@ -258,7 +336,97 @@
       function postDetail(post_id) {
         window.location.href = `/detailPost/detailPost.html?postId=${post_id}`;
       }
-      //검색
+
+      const loginInfoBtn = document.querySelector('#loginInfoBtn');
+      const loginInfo = document.querySelector('#loginInfo');
+
+      function showLoginInfo() {
+        if (loginInfo.style.display === 'none') {
+          loginInfo.innerHTML = '';
+          $.ajax({
+            type: 'GET',
+            url: '/loginUsersInfo',
+            success: (data) => {
+              let result = data.users;
+              result.forEach((user, idx) => {
+                if (idx === 0) {
+                  loginInfo.innerHTML += `<div id="login">
+                                      <label class="userName" style="color:red">현재 로그인 중 : ${user.User.email}</label>
+                                      <button type="button" onclick="logoutId(this)" class="btn btn-outline-danger" userId="${user.User_id}" id="logoutBtn">로그 아웃</button>
+                                      <button type="button" onclick="switchId(this)" class="btn btn-outline-warning"  userId="${user.User_id}" id="switchBtn">계정 전환</button>
+                                    </div>`;
+                } else {
+                  loginInfo.innerHTML += `<div id="login">
+                                      <label class="userName">접속자 : ${user.User.email}</label>
+                                      <button type="button" onclick="logoutId(this)" class="btn btn-outline-danger" userId="${user.User_id}" id="logoutBtn">로그 아웃</button>
+                                      <button type="button" onclick="switchId(this)" class="btn btn-outline-warning"  userId="${user.User_id}" id="switchBtn">계정 전환</button>
+                                    </div>`;
+                }
+              });
+            },
+            error: () => {
+              const label = document.createElement('label');
+              loginInfo.style.width = '200px';
+              label.style.marginLeft = '20px';
+              label.style.fontSize = '20px';
+              label.innerText = '로그인이 필요합니다.';
+              loginInfo.appendChild(label);
+            },
+          });
+
+          loginInfo.style.display = 'block';
+        } else {
+          loginInfo.style.display = 'none';
+        }
+      }
+
+      function switchId(id) {
+        const userId = id.getAttribute('userId');
+        const password = prompt('해당 계정의 비밀번호를 입력해주세요.');
+        $.ajax({
+          type: 'POST',
+          url: `/switchId/${userId}`,
+          data: { password },
+          success: (data) => {
+            alert(data.message);
+            window.cookie = 'accessToken' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+            window.location.href = `/home/home.html?id=${userId}`;
+          },
+          error: (error) => {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
+
+      function logoutId(id) {
+        const userId = id.getAttribute('userId');
+        const password = prompt('해당 계정의 비밀번호를 입력해주세요.');
+        $.ajax({
+          type: 'POST',
+          url: `/logout/${userId}`,
+          data: { password },
+          success: (data) => {
+            alert(data.message);
+            $.ajax({
+              type: 'GET',
+              url: '/loginUserInfo',
+              success: (user) => {
+                window.cookie = 'accessToken' + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+                window.location.href = `/home/home.html?id=${user.users.User_id}`;
+              },
+              error: (error) => {
+                alert(error.responseJSON.errorMessage);
+                window.location.href = '/';
+              },
+            });
+          },
+          error: (error) => {
+            alert(error.responseJSON.errorMessage);
+          },
+        });
+      }
+
+      loginInfoBtn.addEventListener('click', showLoginInfo);
     </script>
   </body>
 </html>
