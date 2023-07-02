@@ -9,7 +9,7 @@ module.exports = async (req, res, next) => {
     // case 1) accessToken과 refreshToken이 둘다 없을때
     // 토큰이 없는 경우니까 로그인 후 이용하도록 설정
     if (accessAuthType !== 'Bearer' && !accessAuthToken && !existReFreshToken) {
-      res.status(403).json({
+      res.status(401).json({
         errorMessage: '로그인 후에 이용할 수 있는 기능입니다.',
       });
       return;
@@ -33,7 +33,7 @@ module.exports = async (req, res, next) => {
 
       if (!user) {
         res.clearCookie('accessToken');
-        return res.status(403).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+        return res.status(401).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
       }
 
       res.locals.user = user;
@@ -48,7 +48,7 @@ module.exports = async (req, res, next) => {
 
         if (!user) {
           res.clearCookie('accessToken');
-          return res.status(403).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+          return res.status(401).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
         }
         res.locals.user = user;
         res.locals.userName = user.name;
@@ -73,7 +73,7 @@ module.exports = async (req, res, next) => {
 
           if (!user) {
             res.clearCookie('accessToken');
-            res.status(403).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
+            res.status(401).json({ errorMessage: '토큰 사용자가 존재하지 않습니다.' });
           }
 
           res.locals.user = user;
@@ -90,7 +90,7 @@ module.exports = async (req, res, next) => {
       if (existReFreshToken)
         await Token.destroy({ where: { token_id: existReFreshToken.token_id } });
 
-      res.status(403).json({
+      res.status(401).json({
         errorMessage: '토큰이 만료된 아이디입니다. 다시 로그인 해주세요.',
       });
       return;
@@ -98,7 +98,7 @@ module.exports = async (req, res, next) => {
       // 그 밖의 알수 없는 오류가 발생했을 때는 전부 삭제가 되도록 함
       res.clearCookie('accessToken');
       Token.destroy({ where: {} });
-      res.status(403).json({
+      res.status(401).json({
         errorMessage: '전달된 쿠키에서 오류가 발생하였습니다. 모든 쿠키를 삭제합니다.',
       });
       return;
