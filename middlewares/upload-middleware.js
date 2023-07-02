@@ -27,14 +27,14 @@ const upload = multer({
         !allowedExtensions.includes(path.extname(file.originalname.toLowerCase())) ||
         !file.mimetype.startsWith('image/')
       )
-        return callback('이미지 파일만 업로드가 가능합니다.');
+        return callback({ errorMessage: '이미지 파일만 업로드가 가능합니다.', status: 400 });
 
       const fileName = `${fileId}.${type}`;
       callback(null, fileName);
     },
     acl: 'public-read-write',
   }),
-  limits: { fieldSize: 1024 * 1024 },
+  limits: { fileSize: 1024 * 1024 },
 });
 
 const uploadMiddleware = upload.single('newFile');

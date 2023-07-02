@@ -23,11 +23,19 @@
     ></script>
     <script src="./writePost.js" defer></script>
     <script>
-      function home() {
-        window.location.href = '../home/home.html';
+      function home() {       
+        const userInfo = JSON.parse(localStorage.getItem('response'));
+         
+        if(!userInfo){
+            window.location.href='/';
+        }
+        else window.location.href=`/home/home.html?id=${userInfo.User_id}`;
       }
       function allPost() {
-        window.location.href = '../post/post.html';
+        const userInfo = JSON.parse(localStorage.getItem('response'));
+        if(!userInfo) 
+            window.location.replace(`/post/post.html`);
+        else window.location.replace(`/post/post.html?id=${userInfo.User_id}`);
       }
       //이미지 미리보게 해주는 function (onchange="readURL(this)" 로 설정하면 됨.)
       // function readURL(input) {
@@ -43,13 +51,17 @@
       // }
     </script>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Jua&family=Poor+Story&display=swap');
     </style>
   </head>
   <body>
     <header>
       <div class="mytitle">
-        <h3>반려동물 이야기</h3>
+        <div class="titleName">
+          <h3>반려동물 이야기</h3>
+        </div>
+        <div id="weather-container"></div>
+        <script src="../weather.js"></script>
       </div>
     </header>
     <main>
@@ -81,6 +93,10 @@
         <button type="button" class="btn btn-outline-success" id="postSubmit">게시글 등록</button>
       </form>
     </div>
-    <footer></footer>
+    <footer>
+      <button id="toggleButton" class="btn btn-outline-warning">새 가족을 찾아보세요!</button>
+        <div id="animal-container"></div>
+        <script src="./animals.js"></script>
+    </footer>
   </body>
 </html>

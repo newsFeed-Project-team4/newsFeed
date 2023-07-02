@@ -26,11 +26,11 @@
       @import url('https://fonts.googleapis.com/css2?family=Jua&display=swap');
     </style>
     <script>
-      function home() {
-        window.location.href = '../home/home.html';
-      }
-      function writePost() {
-        window.location.href = '../writePost/writePost.html';
+      function homeBack() {
+        const userInfo = JSON.parse(localStorage.getItem('response'));
+        if (!userInfo) {
+          window.location.replace(`/`);
+        } else window.location.replace(`/home/home.html?id=${userInfo.User_id}`);
       }
       function allPost() {
         window.location.href = '../post/post.html';
@@ -42,11 +42,12 @@
       <button type="button" id="postBtn" class="btn btn-outline-dark" onclick="writePost()">
         게시글 작성
       </button>
-      <button type="button" id="picturePostBtn" class="btn btn-outline-dark">사진 게시판</button>
       <button type="button" id="allPostBtn" class="btn btn-outline-dark" onclick="allPost()">
         전체 게시판
       </button>
-      <button type="button" id="homeBtn" class="btn btn-outline-dark" onclick="home()">Home</button>
+      <button type="button" id="homeBtn" class="btn btn-outline-dark" onclick="homeBack()">
+        🏠
+      </button>
     </div>
     <container class="detailPost">
       <div class="card border-secondary mb-3" id="detailBody">

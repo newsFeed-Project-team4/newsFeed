@@ -2,6 +2,32 @@
   font-family: 'Jua', sans-serif;
 }
 
+.mytitle {
+  width: 100vw;
+  box-sizing: border-box;
+  height: 150px;
+
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('https://i.postimg.cc/WzFLRMgm/My-Photo-1218898596-0549.jpg');
+  background-position: center;
+  background-size: contain;
+
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0 20px 0;
+}
+
+.mytitle .titleName {
+  height: 50px;
+}
+.mytitle .search {
+  margin: 10px 0 0 0;
+}
+
 .postImage {
   width: 400px;
   height: 300px;
@@ -34,6 +60,7 @@
 
 .post:hover {
   transform: scale(1.02);
+  cursor: pointer;
 }
 
 .postTitle {
@@ -58,6 +85,10 @@
 .like {
   font-weight: bold;
   padding-top: 8px;
+}
+
+.like:hover {
+  cursor: pointer;
 }
 
 .buttons {
