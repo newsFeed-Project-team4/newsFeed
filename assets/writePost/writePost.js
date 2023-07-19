@@ -42,30 +42,10 @@ async function savePost() {
   const content = document.querySelector('#postContent').value;
   const newFile = document.querySelector('#formFile').files[0];
 
+  //사진의 버퍼를 가져올 수 있는데 이 버퍼를 이미지 태그로 걸어둘 수 있음(mimetype설정)
+  console.log(newFile);
   try {
     if (newFile) {
-      const extension =
-        '.' +
-        newFile.name
-          .substring(newFile.name.length - 5, newFile.name.length)
-          .toLowerCase()
-          .split('.')[1];
-      const allowedExtensions = [
-        '.png',
-        '.jpg',
-        '.jpeg',
-        '.jfif',
-        '.exif',
-        '.tiff',
-        '.bmp',
-        '.gif',
-      ];
-
-      if (!allowedExtensions.includes(extension) || !newFile.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
-        return;
-      }
-
       form.append('newFile', newFile);
     }
 
@@ -77,18 +57,18 @@ async function savePost() {
       body: form,
     })
       .then((res) => res.json())
-      .then((res) => {
-        const errorMessage = res.errorMessage;
+      .then((data) => {
+        const errorMessage = data.errorMessage;
         // 게시글 작성 완료 시 메인 페이지로 이동
         if (errorMessage) {
-          alert(res.errorMessage);
+          alert(errorMessage);
         } else {
-          alert(res.message);
+          alert(data.message);
           window.location.href = '/post/post.html';
         }
       });
   } catch (error) {
-    console.log(error);
+    alert(error);
   }
 }
 
@@ -117,7 +97,6 @@ async function modifyPost() {
         '.bmp',
         '.gif',
       ];
-
       if (!allowedExtensions.includes(extension) || !newFile.type.startsWith('image/')) {
         alert('이미지 파일만 업로드 가능합니다.');
         return;
@@ -135,6 +114,7 @@ async function modifyPost() {
       .then((res) => res.json())
       .then((res) => {
         const errorMessage = res.errorMessage;
+
         // 게시글 작성 완료 시 메인 페이지로 이동
         if (errorMessage) {
           alert(res.errorMessage);
@@ -144,7 +124,7 @@ async function modifyPost() {
         }
       });
   } catch (error) {
-    console.log(error);
+    // console.log(error.responseJSON.errorMessage);
   }
 }
 

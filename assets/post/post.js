@@ -1,5 +1,7 @@
 $(document).ready(() => {
-  getPosts();
+  setTimeout(() => {
+    getPosts();
+  }, 1000);
 });
 
 const printPosts = document.querySelector('.printPosts');
@@ -20,7 +22,6 @@ function getPosts() {
         post.image_url
           ? (Img = post.image_url)
           : (Img = '<img src="../image/defaultImage.jpg" id="priview" class="postImage" />');
-
         let likes = posts[idx].Likes.length;
         results += `
           <div class="post" >

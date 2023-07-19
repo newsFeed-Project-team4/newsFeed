@@ -2,16 +2,23 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const { User, UserInfo, Token } = require('../models');
+const Axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
 const authMiddleware = require('../middlewares/auth-middleware.js');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 const salt = 12;
+require('dotenv').config;
+const env = process.env;
 
 router.post('/signup', uploadMiddleware, async (req, res) => {
-  const filepath = req.file ? req.file.location : null;
+  let filepath = req.file ? req.file.location : null;
   const { email, name, password, confirmPassword, pet_name } = req.body;
   const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
+
+  if (filepath) {
+    filepath = filepath.replace('assume-bucket', 'assume-bucket-resized');
+  }
   try {
     if (!email || !name || !password || !confirmPassword)
       return res
@@ -122,6 +129,41 @@ router.post('/login', async (req, res) => {
     console.log(error);
     return res.status(500).json({ errorMessage: '로그인에 실패하였습니다.' });
   }
+});
+
+router.get('/socialLogin/kakao', async (req, res) => {
+  const code = req.query.code;
+
+  const authToken = await Axios.post(
+    'https://kauth.kakao.com/oauth/token',
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      params: {
+        grant_type: 'authorization_code',
+        client_id: env.KAKAO_RESTAPI_KEY,
+        code,
+        redirect_uri: 'http://127.0.0.1:3018/socialLogin/kakao',
+      },
+    },
+  );
+
+  const authInfo = await Axios.post(
+    'https://kapi.kakao.com/v2/user/me',
+    {},
+    {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: 'Bearer ' + authToken.data.access_token,
+      },
+    },
+  );
+
+  console.log(authInfo.data.kakao_account);
+
+  return res.status(200).json({ message: '인증완료' });
 });
 
 //회원 정보 수정 API

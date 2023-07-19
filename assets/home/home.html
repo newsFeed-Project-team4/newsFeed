@@ -152,18 +152,9 @@
           alert('잘못된 접근입니다. 로그인부터 해주세요.');
           window.location.href = '/';
         }
-        invalidId();
-        // noneUserId(user_id);
-        let User_id = 0;
-        await $.ajax({
-          type: 'GET',
-          url: '/loginUserInfo',
-          success: (data) => {
-            User_id = data.users.User_id;
-          },
-        });
+        await invalidId();
 
-        getLoginInfo(User_id);
+        getLoginInfo(user_id);
         getPosts();
         // if ($('#afterPwd1').css('display') != 'none') {
         //   $('#afterPwd1').hide();
@@ -171,28 +162,25 @@
         // }
       });
 
-      function invalidId() {
-        $.ajax({
-          type: 'GET',
-          url: '/loginUsersInfo',
-          success: (data) => {
-            const results = data.users;
-            const loginArr = [];
-            results.forEach((user) => {
-              loginArr.push(user.User_id);
-            });
-            if (loginArr.includes(user_id)) {
-              if (user_id / 1 !== user.User_id / 1) {
-                alert('로그인 되어 있지 않은 아이디입니다. 로그인부터 해주세요.');
-                window.location.href = '/';
-              }
-            }
-          },
-          error: (error) => {
-            alert(error.responseJSON.errorMessage);
+      async function invalidId() {
+        try {
+          const response = await fetch('/loginUserInfo');
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.errorMessage);
+          }
+          const data = await response.json();
+          const user = data.users;
+          if (user_id / 1 === user.User_id / 1) {
+            return;
+          } else {
+            alert('잘못된 접근입니다. 다시 시도해 주세요.');
             window.location.href = '/';
-          },
-        });
+          }
+        } catch (error) {
+          alert(error.message);
+          window.location.href = '/';
+        }
       }
 
       //params로 받아오는 user_id값이 없는 값일 경우 처리

@@ -11,14 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.1407.0",
+    "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "https": "^1.0.0",
     "jsonwebtoken": "^9.0.0",
     "multer": "^1.4.5-lts.1",
     "multer-s3": "^2.10.0",
+    "multer-s3-transform-2": "^1.0.2",
     "mysql2": "^3.4.2",
+    "nodemailer": "^6.9.3",
     "sequelize": "^6.32.1",
     "sharp": "^0.32.1",
     "uuid4": "^2.0.3"

@@ -201,7 +201,7 @@ async function modifyComment(Ids) {
       }
     },
     error: () => {
-      alert('게시글 수정 권한이 없습니다.');
+      alert('댓글 수정 권한이 없습니다.');
       return;
     },
   });

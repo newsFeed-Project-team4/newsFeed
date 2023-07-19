@@ -56,9 +56,14 @@
           <div>
             <form class="signUpForm" enctype="multipart/form-data">
               <div>
-                <div class="input">
+                <div class="email">
                   <label for="signUpEmail">email</label>
                   <input id="signUpEmail" class="modal-input" />
+                  <button class="sendMail" type="button">인증 보내기</button>
+                </div>
+                <div class="authForm" style="display: none">
+                  <input class="modal-input" id="authCode" />
+                  <button type="button" class="emailAuth">인증하기</button>
                 </div>
                 <div class="input">
                   <label for="signUpName">이름</label>
@@ -66,11 +71,16 @@
                 </div>
                 <div class="input">
                   <label for="signUpPwd">비밀번호</label>
-                  <input id="signUpPwd" class="modal-input" type="password" />
+                  <input id="signUpPwd" class="modal-input" type="password" autocomplete="off" />
                 </div>
                 <div class="input">
                   <label for="signUpConfirmPwd">비밀번호 확인</label>
-                  <input id="signUpConfirmPwd" class="modal-input" type="password" />
+                  <input
+                    id="signUpConfirmPwd"
+                    class="modal-input"
+                    type="password"
+                    autocomplete="off"
+                  />
                 </div>
                 <div class="input">
                   <label for="signUpPetName">반려동물명</label>
@@ -113,10 +123,12 @@
                 placeholder="Username"
                 aria-label="Username"
                 aria-describedby="basic-addon1"
+                autocomplete="off"
               />
             </div>
           </div>
           <div class="loginBtn">
+            <img src="image/kakao.png" class="kakaoLogin" />
             <button class="submit btn btn-outline-primary" onclick="sign_in()">로그인</button>
             <button class="signUpModal btn btn-outline-info" onclick="signUpModal()">
               회원가입
@@ -124,15 +136,12 @@
           </div>
         </div>
         <div class="postBox">
-          <div class="post">
-            <p>확인용</p>
-          </div>
+          <div class="post"></div>
         </div>
       </div>
       <div class="postImgBox">
         <div class="postBottomBox">
           <div class="imgBox"></div>
-          <label>확인용</label>
         </div>
       </div>
     </main>
@@ -157,6 +166,17 @@
       }
       function close2() {
         if ($('#modal2').css('display') != 'none') {
+          // imput창들을 모두 비우는 방법이지만 비효율적(인증 완료 했을 시,)
+          // let clearInputs = document.getElementsByClassName('modal-input');
+          // for (let i = 0; i < clearInputs.length; i++) {
+          //   clearInputs[i].value = '';
+          // }
+
+          // 해당 form 부분만 리로드는 되는데 인증이 되질 않음...
+          // $('.signUpForm').load(location.href + ' .signUpForm');
+
+          //일단 reload하는 방향으로 해결
+          window.location.reload();
           $('#modal2').hide();
         }
       }

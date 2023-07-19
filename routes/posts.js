@@ -1,40 +1,82 @@
 const express = require('express');
 const { Post, Like } = require('../models');
 const { Op } = require('sequelize');
-const fs = require('fs');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth-middleware');
 const uploadMiddleware = require('../middlewares/upload-middleware.js');
 
+// const AWS = require('aws-sdk');
+// const sharp = require('sharp');
+// const https = require('https');
+// require('dotenv').config();
+// const env = process.env;
+
+// const s3 = new AWS.S3({
+//   accessKeyId: env.S3_ACCESS_KEY,
+//   secretAccessKey: env.S3_ACCESS_KEY_SECRET,
+//   region: env.AWS_REGION,
+// });
+
 router.post('/posts', authMiddleware, uploadMiddleware, async (req, res) => {
-  // if (req.file) {
-  //   try {
-  //     sharp(req.buffer)
-  //       .resize({ width: 600 })
-  //       .withMetadata()
-  //       .toBuffer((err, buffer) => {
-  //         if (err) throw err;
-  //         fs.writeFile(res.file.path, buffer, (err) => {
-  //           if (err) throw err;
-  //         });
-  //       });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
   let filepath = req.file ? req.file.location : null;
+  // console.log(req.file.location);
+  //여기에 프로미스 함수를
+  if (filepath) {
+    filepath = filepath.replace('assume-bucket', 'assume-bucket-resized');
+  }
   try {
     const { User_id } = res.locals.user;
     const name = res.locals.userName;
     const { title, content } = req.body;
 
-    if (!title || !content) {
+    if (!title || !content)
       return res.status(400).json({
         errorMessage: '게시글의 정보가 입력되지 않았습니다.',
       });
-    }
+
+    // 방법 2)
+    // if (filepath) {
+    //   const imageUrl = req.file.location;
+
+    // 이미지를 다운로드합니다.
+    //   const downloadImage = () =>
+    //     new Promise((resolve, reject) => {
+    //       https.get(imageUrl, (response) => {
+    //         if (response.statusCode !== 200) {
+    //           reject(new Error('이미지를 다운로드할 수 없습니다.'));
+    //         }
+    //         const chunks = [];
+    //         response.on('data', (chunk) => chunks.push(chunk));
+    //         response.on('end', () => resolve(Buffer.concat(chunks)));
+    //       });
+    //     });
+    //   // 이미지를 다운로드하고 리사이징합니다.
+    //   const imageBuffer = await downloadImage();
+    //   const resizedImageBuffer = await sharp(imageBuffer)
+    //     .resize({ width: 500 }) // 리사이징할 크기를 지정합니다.
+    //     .toBuffer();
+
+    //   const uploadParams = {
+    //     Bucket: env.BUCKET_NAME,
+    //     Key: `resized/${req.file.key}`,
+    //     Body: resizedImageBuffer,
+    //     ContentType: req.file.contentType,
+    //     ACL: 'public-read',
+    //   };
+
+    //   const uploadResult = await s3.upload(uploadParams).promise();
+    //   filepath = uploadResult.Location;
+
+    //   const deleteParams = {
+    //     Bucket: env.BUCKET_NAME,
+    //     Key: req.file.key,
+    //   };
+
+    //   await s3.deleteObject(deleteParams).promise();
+    // }
+
     const imageTag = filepath
-      ? `<img src="${filepath}" class="postImage" alt="../image/defaultImage.jpg" />`
+      ? `<img src="${filepath}" class="postImage" alt="../assets/image/defaultImage.jpg" />`
       : '';
 
     const post = await Post.create({
@@ -266,7 +308,7 @@ router.delete('/posts/:post_id', authMiddleware, async (req, res) => {
       },
     });
 
-    return res.status(200).json({ message: '게시글이 삭제되었습니다.' });
+    return res.status(200).json({ message: '게시글이 삭제되었습니다.' }); //204
   } catch (error) {
     console.error(error);
     return res.status(500).json({ errorMessage: '게시글 삭제에 실패했습니다.' });

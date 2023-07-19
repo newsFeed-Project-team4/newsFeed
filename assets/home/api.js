@@ -1,30 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {});
+
+/* <div class="authForm" display="none"> */
+
 //회원가입 form
 const signUpSubmitBtn = document.querySelector('.signUpForm');
+const sendEmailBtn = document.querySelector('.sendMail');
+const emailAuthBtn = document.querySelector('.emailAuth');
+
 async function signUp(event) {
   event.preventDefault();
   const form = new FormData();
-  const email = document.querySelector('#signUpEmail').value;
   const name = document.querySelector('#signUpName').value;
   const password = document.querySelector('#signUpPwd').value;
   const confirmPassword = document.querySelector('#signUpConfirmPwd').value;
   const pet_name = document.querySelector('#signUpPetName').value;
+  const email = document.querySelector('#signUpEmail').value;
   const newFile = document.querySelector('#newFile').files[0];
+
+  if (document.querySelector('#signUpEmail').readOnly === false) {
+    return alert('이메일 인증을 해주세요.');
+  }
+
   if (newFile) {
-    const extension = newFile.name.split('.');
-    //만약 이름이 ... 일경우를 제일 뒷값이 파일값
-    let index = 0;
-    for (let i in extension) {
-      index = i;
-    }
-    const allowedExtensions = ['png', 'jpg', 'jpeg', 'jfif', 'exif', 'tiff', 'bmp', 'gif'];
-    if (!allowedExtensions.includes(extension[index]) || !newFile.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드 가능합니다.');
-      return;
-    }
     form.append('newFile', newFile);
   }
   form.append('email', email);
+  console.log(email);
   form.append('name', name);
   form.append('password', password);
   form.append('confirmPassword', confirmPassword);
@@ -46,6 +47,51 @@ async function signUp(event) {
 }
 signUpSubmitBtn.addEventListener('submit', signUp);
 
+async function sendEmail() {
+  const emailReg = new RegExp(/^\w+([\.-]?\w+)*@\w+([\.-]?\w)*(\.\w{2,3})+$/);
+  const email = document.querySelector('#signUpEmail').value;
+  const authForm = document.querySelector('.authForm');
+  const emailAuth = document.querySelector('.emailAuth');
+  let code, expire_time;
+
+  if (!email || !emailReg.test(email)) {
+    return alert('이메일이 비어 있거나 이메일이 형식에 맞지 않습니다.');
+  }
+
+  authForm.style = 'display: visible';
+
+  await $.ajax({
+    type: 'POST',
+    url: '/sendMail',
+    data: { email },
+    success: (data) => {
+      [code, expire_time] = [data.code, data.expire_time];
+      alert(data.message);
+    },
+    error: (error) => {
+      console.error(error);
+      alert(error.responseJSON.errorMessage);
+      authForm.style = 'display: none';
+    },
+  });
+
+  emailAuth.addEventListener('click', () => {
+    const authCode = document.querySelector('#authCode').value;
+
+    if (authCode === code && Date.now() < expire_time) {
+      alert('인증에 성공하셨습니다.');
+      document.querySelector('#signUpEmail').readOnly = true;
+      authForm.style = 'display:none';
+      sendEmailBtn.style.display = 'none';
+    } else {
+      alert('인증에 실패하셨습니다. 다시 인증해주세요. ');
+      document.querySelector('#signUpEmail').value = '';
+      document.querySelector('#authCode').value = '';
+    }
+  });
+}
+
+sendEmailBtn.addEventListener('click', sendEmail);
 const searchPosts = document.querySelector('.search');
 //검색
 function searchPost(event) {
@@ -91,3 +137,14 @@ function searchPost(event) {
   });
 }
 searchPosts.addEventListener('submit', searchPost);
+
+const kakaoLoginBtn = document.querySelector('.kakaoLogin');
+
+function kakaoLogin() {
+  window.location.href =
+    'https://kauth.kakao.com/oauth/authorize?client_id=6cdf7b0e538d88b2284a5dee284f9b5b&redirect_uri=' +
+    encodeURIComponent(`http://127.0.0.1:3018/socialLogin/kakao`) +
+    '&response_type=code';
+}
+
+kakaoLoginBtn.addEventListener('click', kakaoLogin);

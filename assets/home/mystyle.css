@@ -38,6 +38,12 @@ body {
   justify-content: center;
   margin: 0 0 20px 0;
 }
+.sendMail {
+  width: 100px;
+  position: relative;
+  right: -180px;
+  top: -33px;
+}
 
 .mytitle .titleName {
   height: 50px;
@@ -142,6 +148,7 @@ body {
   border-width: 2px;
   transition: transform 100ms ease-in;
   position: absolute;
+  /* position : sticky */
 }
 
 .userInfoBox {
@@ -207,7 +214,7 @@ body {
 }
 
 .loginBtn {
-  margin-left: 150px;
+  margin-left: 50px;
 }
 
 .loginBtn > button {
