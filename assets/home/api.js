@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {});
+require('dotenv').config;
+const env = process.env;
 
 /* <div class="authForm" display="none"> */
 
@@ -142,7 +144,7 @@ const kakaoLoginBtn = document.querySelector('.kakaoLogin');
 
 function kakaoLogin() {
   window.location.href =
-    'https://kauth.kakao.com/oauth/authorize?client_id=6cdf7b0e538d88b2284a5dee284f9b5b&redirect_uri=' +
+    `https://kauth.kakao.com/oauth/authorize?client_id=${env.KAKAO_RESTAPI_KEY}&redirect_uri=` +
     encodeURIComponent(`http://127.0.0.1:3018/socialLogin/kakao`) +
     '&response_type=code';
 }
