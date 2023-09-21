@@ -40,17 +40,12 @@
 ---
 
 **기능에 대한 코드 설명**
-- accessToken 및 refreshToken
-  - 여러 사용자의 로그인 및 계정 전환을 위해 accessToken / refreshToken 을 동시에 생성
-  - accessToken은 만료기간을 1시간으로 정했고 refreshToken은 만료기간을 14일로 정함
-  - 최초 로그인 시, 두 개가 동시에 생성이 되며 refreshToken이 만료되지 않는 이상 accessToken이 삭제되거나 만료기간을 넘기게 되더라도 refreshToken을 검증해 검증이 완료되면 새 accessToken이 발급되도록 구현
-  - refreshToken이 만료되었을 때, accessToken이 만료되지 않았다면 그대로 사용이 가능하고 만일, accessToken도 만료가 되었다면 새로 로그인하라는 오류를 반환하면서 만료된 토큰을 삭제함
-
 **accessToken / refreshToken**
-- 쿠키에 저장할 accessToken과 db에 저장해서 사용할 refreshToken 두개를 발급받아 사용하도록 구현
+- 여러 사용자의 로그인 및 계정 전환을 위해 accessToken / refreshToken 을 동시에 생성
 - accessToken은 만료기간을 1시간으로 정했고 refreshToken은 만료기간을 14일로 정함
-- 최초 로그인 시, 두 개가 동시에 생성이 되며 refreshToken이 만료되지 않는 이상 accessToken이
-  - 삭제되거나 만료기간을 넘기게 되더라도 refreshToken을 검증해 검증이 완료되면 새 accessToken이 발급되도록 구현
+- 최초 로그인 시, 두 개가 동시에 생성이 되며 refreshToken이 만료되지 않는 이상 accessToken이 삭제되거나 만료기간을 넘기게 되더라도 refreshToken을 검증해 검증이 완료되면 새 accessToken이 발급되도록 구현
+- refreshToken이 만료되었을 때, accessToken이 만료되지 않았다면 그대로 사용이 가능하고 만일, accessToken도 만료가 되었다면 새로 로그인하라는 오류를 반환하면서 만료된 토큰을 삭제함
+- 쿠키에 저장할 accessToken과 db에 저장해서 사용할 refreshToken 두개를 발급받아 사용하도록 구현
 - 처음에는 한 사용자만의 refreshToken을 저장하는 방식으로 구현을 했었고 (로그인 유지만 가능하도록)
   - 이후 여러 사용자가 로그인을 해서 로그아웃 하지 않는 이상 사용자 계정 전환을 할 수 있도록 구현
 - refreshToken이 만료되었을 때, accessToken이 만료되지 않았다면 그대로 사용이 가능하고
